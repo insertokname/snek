@@ -1,7 +1,5 @@
 #include "board.hpp"
 
-
-
 void snek::Board::_draw_cell(snek::App *app, std::size_t y, std::size_t x) {
     SDL_Rect rect;
     rect.x = x * CELL_SIZE;
@@ -45,6 +43,28 @@ void snek::Board::_draw_cell(snek::App *app, std::size_t y, std::size_t x) {
 
 }
 
+void snek::Board::_spawn_food() {
+    std::vector<std::pair<std::size_t, std::size_t>> valid_spaces;
+    for (std::size_t i = 0;i < this->_height;i++) {
+        for (std::size_t j = 0;j < this->_width;j++) {
+            if (this->_mat[i][j] == snek::Board::Cell::empty) {
+                valid_spaces.push_back(std::pair<std::size_t, std::size_t>(i, j));
+            }
+        }
+    }
+
+    if (valid_spaces.size() == 0) {
+        std::cout << "No more spaces left to spawn food!\nYou probably won!\n";
+        exit(0);
+    }
+
+    std::srand(static_cast<unsigned int>(std::time(nullptr)));
+
+    std::size_t index = std::rand() % valid_spaces.size();
+    this->_mat[valid_spaces[index].first][valid_spaces[index].second] =
+        snek::Board::Cell::food;
+}
+
 snek::Board::Board(std::size_t height, std::size_t width) : _width(width), _height(height) {
     this->_mat = std::vector <std::vector<Board::Cell>>(height, std::vector<Board::Cell>(width, Board::Cell::empty));
 
@@ -54,9 +74,7 @@ snek::Board::Board(std::size_t height, std::size_t width) : _width(width), _heig
     this->_mat[height / 2 - 1][width / 2 - 1] = snek::Board::Cell::tail;
     this->_mat[height / 2 - 1][width / 2] = snek::Board::Cell::head;
 
-    this->_mat[2][2] = snek::Board::Cell::food;
-    this->_mat[2][3] = snek::Board::Cell::food;
-    this->_mat[2][4] = snek::Board::Cell::food;
+    this->_spawn_food();
 }
 
 void snek::Board::draw_board(snek::App *app) {
@@ -91,6 +109,8 @@ int snek::Board::move_snake(std::pair<int, int> direction) {
 
     //if the snake finds a fruit extend it
     if (this->_mat[new_head.first][new_head.second] == snek::Board::Cell::food) {
+        this->_spawn_food();
+
         this->_snake.push_front(new_head);
         this->_mat[head_copy.first][head_copy.second] = snek::Board::Cell::body;
         this->_mat[new_head.first][new_head.second] = snek::Board::Cell::head;

@@ -4,6 +4,9 @@
 #include "defs.hpp"
 #include <vector>
 #include <deque>
+#include <iostream>
+#include <cstdlib>
+#include <ctime>
 
 namespace snek {
     class Board {
@@ -13,6 +16,7 @@ namespace snek {
         enum Cell { empty, tail, body, head, food };
         std::vector <std::vector<Board::Cell>> _mat;
         void _draw_cell(snek::App *app, std::size_t y, std::size_t x);
+        void _spawn_food();
     public:
         Board(std::size_t height, std::size_t width);
         void draw_board(snek::App *app);
