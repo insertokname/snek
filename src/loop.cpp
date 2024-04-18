@@ -10,7 +10,7 @@ namespace snek {
         SDL_RenderPresent(app->renderer);
     }
 
-    void doInput(std::pair<int,int> &direction) {
+    void doInput(std::pair<int, int> &direction) {
         SDL_Event event;
 
         while (SDL_PollEvent(&event)) {

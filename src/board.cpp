@@ -48,11 +48,11 @@ void snek::Board::_draw_cell(snek::App *app, std::size_t y, std::size_t x) {
 snek::Board::Board(std::size_t height, std::size_t width) : _width(width), _height(height) {
     this->_mat = std::vector <std::vector<Board::Cell>>(height, std::vector<Board::Cell>(width, Board::Cell::empty));
 
-    this->_snake.push_front(std::pair<std::size_t, std::size_t>(height / 2 -1, width / 2 -1));
-    this->_snake.push_front(std::pair<std::size_t, std::size_t>(height / 2 -1, width / 2 ));
+    this->_snake.push_front(std::pair<std::size_t, std::size_t>(height / 2 - 1, width / 2 - 1));
+    this->_snake.push_front(std::pair<std::size_t, std::size_t>(height / 2 - 1, width / 2));
 
-    this->_mat[height / 2 -1][width / 2 -1] = snek::Board::Cell::tail;
-    this->_mat[height / 2 -1][width / 2 ] = snek::Board::Cell::head;
+    this->_mat[height / 2 - 1][width / 2 - 1] = snek::Board::Cell::tail;
+    this->_mat[height / 2 - 1][width / 2] = snek::Board::Cell::head;
 
     this->_mat[2][2] = snek::Board::Cell::food;
     this->_mat[2][3] = snek::Board::Cell::food;
@@ -67,13 +67,14 @@ void snek::Board::draw_board(snek::App *app) {
     }
 }
 
-bool snek::Board::move_snake(std::pair<int, int> direction) {
+int snek::Board::move_snake(std::pair<int, int> direction) {
     if (!(direction.first || direction.second)) {
         return 0;
     }
     std::pair<int, int> new_head = this->_snake.front(),
         head_copy = this->_snake.front(),
-        tail_copy = this->_snake.back();
+        tail_copy = this->_snake.back(),
+        second_segment = *this->_snake.begin().operator++();
     new_head.first += direction.first;
     new_head.second += direction.second;
 
@@ -81,6 +82,11 @@ bool snek::Board::move_snake(std::pair<int, int> direction) {
     if (!(0 <= new_head.first && new_head.first < this->_height &&
         0 <= new_head.second && new_head.second < this->_width)) {
         return 1;
+    }
+
+    //the snake moved the oposite way and should keep course
+    if (new_head == second_segment) {
+        return 2;
     }
 
     //if the snake finds a fruit extend it

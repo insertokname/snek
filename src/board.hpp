@@ -18,7 +18,8 @@ namespace snek {
         void draw_board(snek::App *app);
 
         //returns 1 if the snake is dead
+        //return 2 if the snake should keep course
         //dead = overlaping or outside boundry
-        bool move_snake(std::pair<int, int> direction);
+        int move_snake(std::pair<int, int> direction);
     };
 }
