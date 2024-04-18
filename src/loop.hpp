@@ -7,5 +7,5 @@ namespace snek {
 
     void presentScene(snek::App *app);
 
-    void doInput(void);
+    void doInput(std::pair<int, int> &direction);
 }
