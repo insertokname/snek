@@ -7,4 +7,4 @@ bin := ${out}/bin
 endif
 
 all:
-	g++ ${SRC}/loop.cpp ${SRC}/init.cpp ${SRC}/main.cpp `sdl2-config --cflags --libs` -o ${bin}/snek
+	g++ ${SRC}/board.cpp ${SRC}/loop.cpp ${SRC}/init.cpp ${SRC}/main.cpp `sdl2-config --cflags --libs` -o ${bin}/snek
