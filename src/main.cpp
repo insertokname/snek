@@ -15,16 +15,23 @@ int main(void) {
     initSDL(app);
 
     auto start = std::chrono::steady_clock::now();
-    std::pair<int, int> direction;
-
+    std::pair<int,int> direction;
+    bool buffering = 0;
+    
     while (1) {
         snek::prepareScene(app);
 
-        snek::doInput(direction);
+        std::pair<int, int> raw_input;
+        snek::doInput(raw_input);
+
+        if (!buffering && (raw_input.first || raw_input.second)) {
+            direction = raw_input;
+            buffering = 1;
+        }
 
         if ((std::chrono::steady_clock::now() - start) >= std::chrono::milliseconds(250)) {
             start = std::chrono::steady_clock::now();
-            snek::doInput(direction);
+            buffering = 0;
             switch (board.move_snake(direction)) {
                 case 0:
                     break;
