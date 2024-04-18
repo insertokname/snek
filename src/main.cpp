@@ -4,9 +4,11 @@
 #include "defs.hpp"
 #include "init.hpp"
 #include "loop.hpp"
+#include "board.hpp"
 
 int main(void)
 {
+    snek::Board board;
     snek::App *app = new snek::App;
     memset(app, 0, sizeof(snek::App));
 
@@ -16,6 +18,8 @@ int main(void)
         snek::prepareScene(app);
 
         snek::doInput();
+
+        board.draw_board(app);
 
         snek::presentScene(app);
 
