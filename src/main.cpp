@@ -8,7 +8,7 @@
 
 int main(void)
 {
-    snek::Board board;
+    snek::Board board(10,10);
     snek::App *app = new snek::App;
     memset(app, 0, sizeof(snek::App));
 
