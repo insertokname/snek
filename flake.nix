@@ -9,7 +9,7 @@
     # that takes the system we're targetting
     flake-utils.lib.eachDefaultSystem (system:
       let
-        name = "sdl-snek";
+        name = "snek";
         pkgs = nixpkgs.legacyPackages.${system};
         src = ./.;
       in
