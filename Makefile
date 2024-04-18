@@ -1,10 +1,15 @@
 SRC := src
 
-ifndef out 
+ifndef TEMPOUT 
 bin :=bin
 else
-bin := ${out}/bin
+bin := ${TEMPOUT}/bin
 endif
 
-all:
+all: ${bin}
 	g++ ${SRC}/board.cpp ${SRC}/loop.cpp ${SRC}/init.cpp ${SRC}/main.cpp `sdl2-config --cflags --libs` -o ${bin}/snek
+
+${bin}:
+	@mkdir ${bin}
+
+undefine TEMPOUT 
