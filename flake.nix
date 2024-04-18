@@ -47,7 +47,7 @@
 			chmod --recursive +w $out
 			chmod --recursive +w $out/bin
 			export TEMPOUT=$out
-			make
+			make -j
 			'';		
 		};
       }
