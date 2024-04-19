@@ -6,8 +6,8 @@ else
 bin := ${TEMPOUT}/bin
 endif
 
-all: ${bin} build/board.o build/loop.o build/init.o build/main.o
-	g++ build/board.o build/loop.o build/init.o build/main.o `sdl2-config --cflags --libs` -o ${bin}/snek
+all: ${bin} build/path.o build/board.o build/loop.o build/init.o build/main.o
+	g++ build/path.o build/board.o build/loop.o build/init.o build/main.o `sdl2-config --cflags --libs` -o ${bin}/snek
 
 build/board.o: build
 	g++ -c ${SRC}/board.cpp -o build/board.o
@@ -20,6 +20,9 @@ build/init.o: build
 
 build/main.o: build
 	g++ -c ${SRC}/main.cpp -o build/main.o
+
+build/path.o: build
+	g++ -c ${SRC}/path.cpp -o build/path.o
 
 build:
 	@mkdir build

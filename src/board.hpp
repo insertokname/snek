@@ -2,6 +2,7 @@
 
 #include "SDL2/SDL.h"
 #include "defs.hpp"
+#include "path.hpp"
 #include <vector>
 #include <deque>
 #include <iostream>
@@ -11,6 +12,7 @@
 namespace snek {
     class Board {
     private:
+        std::vector<std::vector<int>> _path;
         std::size_t _height, _width;
         std::deque <std::pair<std::size_t, std::size_t>> _snake;
         enum Cell { empty, tail, body, head, food };

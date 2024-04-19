@@ -76,6 +76,8 @@ snek::Board::Board(std::size_t height, std::size_t width) : _width(width), _heig
     this->_mat[height / 2 - 1][width / 2] = snek::Board::Cell::head;
 
     this->_spawn_food();
+
+    this->_path = snek::gen_path(this->_height,this->_width);
 }
 
 void snek::Board::draw_board(snek::App *app) {
