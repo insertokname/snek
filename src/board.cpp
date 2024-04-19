@@ -69,11 +69,11 @@ void snek::Board::_spawn_food() {
 snek::Board::Board(std::size_t height, std::size_t width) : _width(width), _height(height) {
     this->_mat = std::vector <std::vector<Board::Cell>>(height, std::vector<Board::Cell>(width, Board::Cell::empty));
 
-    this->_snake.push_front(std::pair<std::size_t, std::size_t>(height / 2 - 1, width / 2 - 1));
-    this->_snake.push_front(std::pair<std::size_t, std::size_t>(height / 2 - 1, width / 2));
+    this->_snake.push_front(std::pair<std::size_t, std::size_t>(height / 2 , width / 2 - 1));
+    this->_snake.push_front(std::pair<std::size_t, std::size_t>(height / 2 , width / 2));
 
-    this->_mat[height / 2 - 1][width / 2 - 1] = snek::Board::Cell::tail;
-    this->_mat[height / 2 - 1][width / 2] = snek::Board::Cell::head;
+    this->_mat[height / 2 ][width / 2 - 1] = snek::Board::Cell::tail;
+    this->_mat[height / 2 ][width / 2] = snek::Board::Cell::head;
 
     this->_spawn_food();
 
@@ -139,5 +139,40 @@ int snek::Board::move_snake(std::pair<int, int> direction) {
 void snek::Board::auto_move_snake() {
     int Xdir[4] = { 0,1,0,-1 },
         Ydir[4] = { 1,0,-1,0 };
-    
+
+    std::pair<std::size_t, std::size_t> pos = this->_snake.front();
+    for (int i = 0;i < 4;i++) {
+        int Ynew = pos.first + Ydir[i],
+            Xnew = pos.second + Xdir[i];
+
+        if (0 <= Ynew && Ynew < this->_height && 0 <= Xnew && Xnew < this->_width) {
+            if (this->_path[Ynew][Xnew] == this->_path[pos.first][pos.second] + 1) {
+                auto temp = this->_mat[Ynew][Xnew];
+                if (temp != snek::Board::Cell::empty && temp != snek::Board::Cell::food) {
+                    std::cout << "failed to reach next correct path in cycle!\n";
+                    exit(1);
+                }
+
+                this->move_snake(std::pair<int, int>(Ydir[i], Xdir[i]));
+                return;
+            }
+        }
+    }
+
+    for (int i = 0;i < 4;i++) {
+        int Ynew = pos.first + Ydir[i],
+            Xnew = pos.second + Xdir[i];
+
+        if (0 <= Ynew && Ynew < this->_height && 0 <= Xnew && Xnew < this->_width) {
+            if (this->_path[Ynew][Xnew] == 0) {
+                auto temp = this->_mat[Ynew][Xnew];
+                if (temp != snek::Board::Cell::empty && temp != snek::Board::Cell::food) {
+                    std::cout << "failed to reach next correct path in cycle!\n";
+                    exit(1);
+                }
+                this->move_snake(std::pair<int, int>(Ydir[i], Xdir[i]));
+                return;
+            }
+        }
+    }
 }

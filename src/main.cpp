@@ -24,6 +24,7 @@ int main(void) {
 
         if ((std::chrono::steady_clock::now() - start) >= std::chrono::milliseconds(snek::MOVE_SPEED)) {
             start = std::chrono::steady_clock::now();
+            board.auto_move_snake();
         }
         
         board.draw_board(app);
