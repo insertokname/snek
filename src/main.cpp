@@ -22,7 +22,7 @@ int main(void) {
         std::pair<int, int> raw_input;
         snek::doInput(raw_input);
 
-        if ((std::chrono::steady_clock::now() - start) >= std::chrono::milliseconds(snek::MOVE_SPEED)) {
+        if ((std::chrono::steady_clock::now() - start) >= std::chrono::microseconds(snek::MOVE_SPEED)) {
             start = std::chrono::steady_clock::now();
             board.auto_move_snake();
         }
@@ -30,8 +30,6 @@ int main(void) {
         board.draw_board(app);
 
         snek::presentScene(app);
-
-        SDL_Delay(5);
     }
     return 0;
 }
