@@ -29,7 +29,7 @@ int main(void) {
             buffering = 1;
         }
 
-        if ((std::chrono::steady_clock::now() - start) >= std::chrono::milliseconds(250)) {
+        if ((std::chrono::steady_clock::now() - start) >= std::chrono::milliseconds(snek::MOVE_SPEED)) {
             start = std::chrono::steady_clock::now();
             buffering = 0;
             switch (board.move_snake(direction)) {
@@ -54,7 +54,7 @@ int main(void) {
 
         snek::presentScene(app);
 
-        SDL_Delay(16);
+        SDL_Delay(5);
     }
     return 0;
 }

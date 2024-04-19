@@ -11,8 +11,6 @@ void snek::Board::_draw_cell(snek::App *app, std::size_t y, std::size_t x) {
         using snek::Board;
 
         case Cell::empty:
-            SDL_SetRenderDrawColor(app->renderer, 255, 255, 255, 255);
-            SDL_RenderDrawRect(app->renderer, &rect);
             break;
 
         case Cell::tail:
@@ -40,6 +38,9 @@ void snek::Board::_draw_cell(snek::App *app, std::size_t y, std::size_t x) {
             SDL_RenderFillRect(app->renderer, &rect);
             break;
     }
+    SDL_SetRenderDrawColor(app->renderer, 255, 255, 255, 255);
+    SDL_RenderDrawRect(app->renderer, &rect);
+
 
 }
 

@@ -1,5 +1,5 @@
 # snek
-snek is a snake algorithm made in sdl
+snek is a snake algorithm made in sdl that automatically solves every board that has at leas one even side
 
 **General structure**
 This project has two branches:
