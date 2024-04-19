@@ -23,7 +23,6 @@ namespace snek {
 
         //returns 1 if the snake is dead
         //return 2 if the snake should keep course
-        //dead = overlaping or outside boundry
         int move_snake(std::pair<int, int> direction);
     };
 }
