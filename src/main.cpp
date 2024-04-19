@@ -15,8 +15,6 @@ int main(void) {
     initSDL(app);
 
     auto start = std::chrono::steady_clock::now();
-    std::pair<int,int> direction;
-    bool buffering = 0;
     
     while (1) {
         snek::prepareScene(app);
@@ -24,30 +22,8 @@ int main(void) {
         std::pair<int, int> raw_input;
         snek::doInput(raw_input);
 
-        if (!buffering && (raw_input.first || raw_input.second)) {
-            direction = raw_input;
-            buffering = 1;
-        }
-
         if ((std::chrono::steady_clock::now() - start) >= std::chrono::milliseconds(snek::MOVE_SPEED)) {
             start = std::chrono::steady_clock::now();
-            buffering = 0;
-            switch (board.move_snake(direction)) {
-                case 0:
-                    break;
-                case 1:
-                    std::cout << "you died!";
-                    exit(0);
-                    break;
-                case 2:
-                    if (board.move_snake(std::pair<int, int>(direction.first * -1, direction.second * -1))) {
-                        std::cout << "you died!";
-                        exit(0);
-                    }
-                    break;
-                default:
-                    break;
-            }
         }
         
         board.draw_board(app);

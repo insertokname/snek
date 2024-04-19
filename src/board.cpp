@@ -135,3 +135,9 @@ int snek::Board::move_snake(std::pair<int, int> direction) {
     this->_snake.push_front(new_head);
     return 0;
 }
+
+void snek::Board::auto_move_snake() {
+    int Xdir[4] = { 0,1,0,-1 },
+        Ydir[4] = { 1,0,-1,0 };
+    
+}

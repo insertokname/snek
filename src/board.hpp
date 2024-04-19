@@ -26,5 +26,6 @@ namespace snek {
         //returns 1 if the snake is dead
         //return 2 if the snake should keep course
         int move_snake(std::pair<int, int> direction);
+        void auto_move_snake();
     };
 }
