@@ -48,7 +48,7 @@ void snek::Board::_spawn_food() {
     std::vector<std::pair<std::size_t, std::size_t>> valid_spaces;
     for (std::size_t i = 0;i < this->_height;i++) {
         for (std::size_t j = 0;j < this->_width;j++) {
-            if (this->_mat[i][j] == snek::Board::Cell::empty) {
+            if (this->_mat[i][j] == snek::Cell::empty) {
                 valid_spaces.push_back(std::pair<std::size_t, std::size_t>(i, j));
             }
         }
@@ -63,17 +63,17 @@ void snek::Board::_spawn_food() {
 
     std::size_t index = std::rand() % valid_spaces.size();
     this->_mat[valid_spaces[index].first][valid_spaces[index].second] =
-        snek::Board::Cell::food;
+        snek::Cell::food;
 }
 
 snek::Board::Board(std::size_t height, std::size_t width) : _width(width), _height(height) {
-    this->_mat = std::vector <std::vector<Board::Cell>>(height, std::vector<Board::Cell>(width, Board::Cell::empty));
+    this->_mat = std::vector <std::vector<Cell>>(height, std::vector<Cell>(width, Cell::empty));
 
     this->_snake.push_front(std::pair<std::size_t, std::size_t>(height / 2 - 1, width / 2 - 1));
     this->_snake.push_front(std::pair<std::size_t, std::size_t>(height / 2 - 1, width / 2));
 
-    this->_mat[height / 2 - 1][width / 2 - 1] = snek::Board::Cell::tail;
-    this->_mat[height / 2 - 1][width / 2] = snek::Board::Cell::head;
+    this->_mat[height / 2 - 1][width / 2 - 1] = snek::Cell::tail;
+    this->_mat[height / 2 - 1][width / 2] = snek::Cell::head;
 
     this->_spawn_food();
 }
@@ -109,27 +109,27 @@ int snek::Board::move_snake(std::pair<int, int> direction) {
     }
 
     //if the snake finds a fruit extend it
-    if (this->_mat[new_head.first][new_head.second] == snek::Board::Cell::food) {
+    if (this->_mat[new_head.first][new_head.second] == snek::Cell::food) {
         this->_spawn_food();
 
         this->_snake.push_front(new_head);
-        this->_mat[head_copy.first][head_copy.second] = snek::Board::Cell::body;
-        this->_mat[new_head.first][new_head.second] = snek::Board::Cell::head;
+        this->_mat[head_copy.first][head_copy.second] = snek::Cell::body;
+        this->_mat[new_head.first][new_head.second] = snek::Cell::head;
         return 0;
     }
     //if the snake colides with the body == dead
-    else if (this->_mat[new_head.first][new_head.second] != snek::Board::Cell::empty) {
+    else if (this->_mat[new_head.first][new_head.second] != snek::Cell::empty) {
         return 1;
     }
 
     //delete old tail, add new head, update old head to body
-    this->_mat[head_copy.first][head_copy.second] = snek::Board::Cell::body;
-    this->_mat[new_head.first][new_head.second] = snek::Board::Cell::head;
-    this->_mat[tail_copy.first][tail_copy.second] = snek::Board::Cell::empty;
+    this->_mat[head_copy.first][head_copy.second] = snek::Cell::body;
+    this->_mat[new_head.first][new_head.second] = snek::Cell::head;
+    this->_mat[tail_copy.first][tail_copy.second] = snek::Cell::empty;
 
     //add new tail
     this->_snake.pop_back();
-    this->_mat[this->_snake.back().first][this->_snake.back().second] = snek::Board::Cell::tail;
+    this->_mat[this->_snake.back().first][this->_snake.back().second] = snek::Cell::tail;
     this->_snake.push_front(new_head);
     return 0;
 }

@@ -2,6 +2,7 @@
 
 #include "SDL2/SDL.h"
 #include "defs.hpp"
+#include "config.hpp"
 #include <vector>
 #include <deque>
 #include <iostream>
@@ -13,8 +14,7 @@ namespace snek {
     private:
         std::size_t _height, _width;
         std::deque <std::pair<std::size_t, std::size_t>> _snake;
-        enum Cell { empty, tail, body, head, food };
-        std::vector <std::vector<Board::Cell>> _mat;
+        std::vector <std::vector<snek::Cell>> _mat;
         void _draw_cell(snek::App *app, std::size_t y, std::size_t x);
         void _spawn_food();
     public:
