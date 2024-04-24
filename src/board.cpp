@@ -1,49 +1,5 @@
 #include "board.hpp"
 
-void snek::Board::_draw_cell(snek::App *app, std::size_t y, std::size_t x) {
-    SDL_Rect rect;
-    rect.x = x * CELL_SIZE;
-    rect.y = y * CELL_SIZE;
-    rect.w = CELL_SIZE;
-    rect.h = CELL_SIZE;
-
-    switch (this->_mat[y][x]) {
-        using snek::Board;
-
-        case Cell::empty:
-            break;
-
-        case Cell::tail:
-            SDL_SetRenderDrawColor(app->renderer, 121, 116, 14, 255);
-            SDL_RenderFillRect(app->renderer, &rect);
-            break;
-
-        case Cell::body:
-            SDL_SetRenderDrawColor(app->renderer, 152, 151, 26, 255);
-            SDL_RenderFillRect(app->renderer, &rect);
-            break;
-
-        case Cell::head:
-            SDL_SetRenderDrawColor(app->renderer, 184, 187, 38, 255);
-            SDL_RenderFillRect(app->renderer, &rect);
-            break;
-
-        case Cell::food:
-            SDL_SetRenderDrawColor(app->renderer, 251, 73, 52, 255);
-            SDL_RenderFillRect(app->renderer, &rect);
-            break;
-
-        default:
-            SDL_SetRenderDrawColor(app->renderer, 255, 255, 255, 255);
-            SDL_RenderFillRect(app->renderer, &rect);
-            break;
-    }
-    SDL_SetRenderDrawColor(app->renderer, 255, 255, 255, 255);
-    SDL_RenderDrawRect(app->renderer, &rect);
-
-
-}
-
 void snek::Board::_spawn_food() {
     std::vector<std::pair<std::size_t, std::size_t>> valid_spaces;
     for (std::size_t i = 0;i < this->_height;i++) {
@@ -76,14 +32,6 @@ snek::Board::Board(std::size_t height, std::size_t width) : _width(width), _heig
     this->_mat[height / 2 - 1][width / 2] = snek::Cell::head;
 
     this->_spawn_food();
-}
-
-void snek::Board::draw_board(snek::App *app) {
-    for (std::size_t i = 0;i < _height;i++) {
-        for (std::size_t j = 0;j < _width;j++) {
-            this->_draw_cell(app, i, j);
-        }
-    }
 }
 
 int snek::Board::move_snake(std::pair<int, int> direction) {
@@ -132,4 +80,16 @@ int snek::Board::move_snake(std::pair<int, int> direction) {
     this->_mat[this->_snake.back().first][this->_snake.back().second] = snek::Cell::tail;
     this->_snake.push_front(new_head);
     return 0;
+}
+
+const std::size_t snek::Board::height() const {
+    return this->_height;
+}
+
+const std::size_t snek::Board::width() const {
+    return this->_width;
+}
+
+const std::vector <std::vector<snek::Cell>> &snek::Board::mat() const {
+    return this->_mat;
 }

@@ -6,6 +6,7 @@
 #include "init.hpp"
 #include "loop.hpp"
 #include "board.hpp"
+#include "draw.hpp"
 
 int main(void) {
     snek::Board board(snek::BOARD_HEIGHT, snek::BOARD_WIDTH);
@@ -50,7 +51,7 @@ int main(void) {
             }
         }
         
-        board.draw_board(app);
+        snek::draw_board(app,board);
 
         snek::presentScene(app);
 
