@@ -30,7 +30,7 @@ int main(void) {
             buffering = 1;
         }
 
-        if ((std::chrono::steady_clock::now() - start) >= std::chrono::milliseconds(snek::MOVE_SPEED)) {
+        if ((std::chrono::steady_clock::now() - start) >= std::chrono::microseconds(snek::MOVE_SPEED)) {
             start = std::chrono::steady_clock::now();
             buffering = 0;
             switch (board.move_snake(direction)) {
