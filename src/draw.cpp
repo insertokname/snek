@@ -1,12 +1,29 @@
 #include "draw.hpp"
 
+#include <climits>
+
 void snek::draw::draw_cell(snek::App *app, const snek::Board board,
-                     std::size_t y, std::size_t x) {
+                           std::size_t y, std::size_t x) {
+    int width, height;
+    SDL_GetWindowSize(app->window, &width, &height);
+    width -= snek::PADDING * 2;
+    height -= snek::PADDING * 2;
+    int cell_width = width / snek::BOARD_WIDTH;
+    int cell_height = height / snek::BOARD_HEIGHT;
+    int cell_size = std::min(cell_height, cell_width);
+
+    double width_start_offset =
+        (width - (cell_size * snek::BOARD_WIDTH)) / 2.0 +
+        snek::PADDING;
+    double height_start_offset =
+        (height - (cell_size * snek::BOARD_HEIGHT)) / 2.0 +
+        snek::PADDING;
+
     SDL_Rect rect;
-    rect.x = x * CELL_SIZE;
-    rect.y = y * CELL_SIZE;
-    rect.w = CELL_SIZE;
-    rect.h = CELL_SIZE;
+    rect.x = x * cell_size + width_start_offset;
+    rect.y = y * cell_size + height_start_offset;
+    rect.w = cell_size;
+    rect.h = cell_size;
 
     switch (board.mat()[y][x]) {
         using snek::Board;

@@ -9,7 +9,7 @@ snek::App::App() : _board(snek::BOARD_HEIGHT, snek::BOARD_WIDTH) {
 
     rendererFlags = SDL_RENDERER_ACCELERATED;
 
-    windowFlags = 0;
+    windowFlags = SDL_WINDOW_RESIZABLE;
 
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
         std::cout << "Couldn't initialize SDL: " << SDL_GetError()
@@ -17,14 +17,14 @@ snek::App::App() : _board(snek::BOARD_HEIGHT, snek::BOARD_WIDTH) {
         exit(1);
     }
 
-    this->window =
-        SDL_CreateWindow("Shooter 01", SDL_WINDOWPOS_UNDEFINED,
-                         SDL_WINDOWPOS_UNDEFINED, snek::SCREEN_WIDTH,
-                         snek::SCREEN_HEIGHT, windowFlags);
+    this->window = SDL_CreateWindow(
+        "snek", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+        snek::INITIAL_SCREEN_WIDTH, snek::INITIAL_SCREEN_HEIGHT,
+        windowFlags);
 
     if (!this->window) {
-        std::cout << "Failed to open " << snek::SCREEN_WIDTH << " x "
-                  << snek::SCREEN_HEIGHT
+        std::cout << "Failed to open " << snek::INITIAL_SCREEN_WIDTH
+                  << " x " << snek::INITIAL_SCREEN_HEIGHT
                   << " window: " << SDL_GetError() << "\n";
         exit(1);
     }
