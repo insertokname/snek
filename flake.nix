@@ -12,45 +12,43 @@
         name = "snek";
         pkgs = nixpkgs.legacyPackages.${system};
         src = ./.;
-      in
-      {
+      in {
         # `eachDefaultSystem` transforms the input, our output set
         # now simply has `packages.default` which gets turned into
         # `packages.${system}.default` (for each system)
-        
-		packages.default = pkgs.stdenv.mkDerivation {
-        
-		inherit system name src;
-        
-		  
-		  buildInputs = with pkgs; [
-			bash
-			coreutils
-			gcc
-			gnumake
-			SDL2
-		];
 
-		unpackPhase = "true";
+        packages.default = pkgs.stdenv.mkDerivation {
 
-		installPhase = ''
-			#ls $sdl/lib -lha > $out
-			#ls > $out 
-			#ls > $out
-			#sdl2-config --libs > $out
+          inherit system name src;
 
-			cp -r $src/src src
-			cp $src/Makefile Makefile
-			mkdir $out
-			mkdir $out/bin
-			chmod --recursive +w src
-			chmod --recursive +w $out
-			chmod --recursive +w $out/bin
-			export TEMPOUT=$out
-			make -j
-			'';		
-		};
-      }
-    );
+          buildInputs = with pkgs; [
+            bash
+            coreutils
+            gcc
+            gnumake
+            SDL2
+            clang-tools
+          ];
+
+          unpackPhase = "true";
+
+          installPhase = ''
+            #ls $sdl/lib -lha > $out
+            #ls > $out 
+            #ls > $out
+            #sdl2-config --libs > $out
+
+            cp -r $src/src src
+            cp $src/Makefile Makefile
+            mkdir $out
+            mkdir $out/bin
+            chmod --recursive +w src
+            chmod --recursive +w $out
+            chmod --recursive +w $out/bin
+            export TEMPOUT=$out
+            make -j
+          '';
+        };
+      });
 }
-   
+
