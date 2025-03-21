@@ -1,6 +1,6 @@
 #include "draw.hpp"
 
-void snek::draw_cell(snek::App *app, const snek::Board board,
+void snek::draw::draw_cell(snek::App *app, const snek::Board board,
                      std::size_t y, std::size_t x) {
     SDL_Rect rect;
     rect.x = x * CELL_SIZE;
@@ -43,10 +43,10 @@ void snek::draw_cell(snek::App *app, const snek::Board board,
     SDL_RenderDrawRect(app->renderer, &rect);
 }
 
-void snek::draw_board(snek::App *app, const snek::Board board) {
+void snek::draw::draw_board(snek::App *app, const snek::Board board) {
     for (std::size_t i = 0; i < board.height(); i++) {
         for (std::size_t j = 0; j < board.width(); j++) {
-            snek::draw_cell(app, board, i, j);
+            snek::draw::draw_cell(app, board, i, j);
         }
     }
 }

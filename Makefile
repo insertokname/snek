@@ -6,17 +6,14 @@ else
 bin := ${TEMPOUT}/bin
 endif
 
-all: ${bin} build/board.o build/draw.o build/loop.o build/init.o build/main.o
-	g++ build/board.o build/loop.o build/draw.o build/init.o build/main.o `sdl2-config --cflags --libs` -o ${bin}/snek
+all: ${bin} build/board.o build/draw.o build/app.o build/main.o
+	g++ build/board.o build/draw.o build/app.o build/main.o `sdl2-config --cflags --libs` -o ${bin}/snek
 
 build/board.o: build
 	g++ -c ${SRC}/board.cpp -o build/board.o
 
-build/loop.o: build
-	g++ -c ${SRC}/loop.cpp -o build/loop.o
-
-build/init.o: build
-	g++ -c ${SRC}/init.cpp -o build/init.o
+build/app.o: build
+	g++ -c ${SRC}/app.cpp -o build/app.o
 
 build/draw.o: build
 	g++ -c ${SRC}/draw.cpp -o build/draw.o

@@ -8,7 +8,7 @@
 
 #include "SDL2/SDL.h"
 #include "config.hpp"
-#include "defs.hpp"
+#include "cell.hpp"
 
 namespace snek {
     class Board {
