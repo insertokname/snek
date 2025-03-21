@@ -1,12 +1,14 @@
 #include <stdlib.h>
-#include <iostream>
+
 #include <chrono>
+#include <iostream>
+
 #include "SDL2/SDL.h"
+#include "board.hpp"
 #include "defs.hpp"
+#include "draw.hpp"
 #include "init.hpp"
 #include "loop.hpp"
-#include "board.hpp"
-#include "draw.hpp"
 
 int main(void) {
     snek::Board board(snek::BOARD_HEIGHT, snek::BOARD_WIDTH);
@@ -16,9 +18,9 @@ int main(void) {
     initSDL(app);
 
     auto start = std::chrono::steady_clock::now();
-    std::pair<int,int> direction;
+    std::pair<int, int> direction;
     bool buffering = 0;
-    
+
     while (1) {
         snek::prepareScene(app);
 
@@ -30,7 +32,8 @@ int main(void) {
             buffering = 1;
         }
 
-        if ((std::chrono::steady_clock::now() - start) >= std::chrono::microseconds(snek::MOVE_SPEED)) {
+        if ((std::chrono::steady_clock::now() - start) >=
+            std::chrono::microseconds(snek::MOVE_SPEED)) {
             start = std::chrono::steady_clock::now();
             buffering = 0;
             switch (board.move_snake(direction)) {
@@ -41,7 +44,9 @@ int main(void) {
                     exit(0);
                     break;
                 case 2:
-                    if (board.move_snake(std::pair<int, int>(direction.first * -1, direction.second * -1))) {
+                    if (board.move_snake(std::pair<int, int>(
+                            direction.first * -1,
+                            direction.second * -1))) {
                         std::cout << "you died!";
                         exit(0);
                     }
@@ -50,8 +55,8 @@ int main(void) {
                     break;
             }
         }
-        
-        snek::draw_board(app,board);
+
+        snek::draw_board(app, board);
 
         snek::presentScene(app);
 

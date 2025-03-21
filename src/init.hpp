@@ -2,8 +2,8 @@
 
 #include <iostream>
 
-#include "defs.hpp"
-#include "config.hpp"
 #include "SDL2/SDL.h"
+#include "config.hpp"
+#include "defs.hpp"
 
 void initSDL(snek::App *app);
