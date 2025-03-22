@@ -2,7 +2,7 @@
 
 #include <iostream>
 
-#include "SDL2/SDL.h"
+#include "SDL.h"
 #include "board.hpp"
 #include "cell.hpp"
 #include "config.hpp"

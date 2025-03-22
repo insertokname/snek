@@ -2,7 +2,7 @@
 
 #include "app.hpp"
 
-int main(void) {
+int main(int argc, char *argv[]) {
     snek::App app;
     app.run();
     return 0;
