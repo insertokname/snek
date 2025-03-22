@@ -1,0 +1,10 @@
+includes in cpp file if possible
+try to make private and public fields more consistent
+getters with consistent naming
+new makefile
+maybe update to cmake?
+-> to . in classes
+change from camel to snake case
+pointers to references
+change move_snake to return an enum
+maybe no more snek:: in front of each project element?
