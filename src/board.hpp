@@ -7,14 +7,11 @@
 #include <vector>
 
 #include "SDL.h"
-#include "config.hpp"
 #include "cell.hpp"
+#include "config.hpp"
 
 namespace snek {
-    enum class SnakeStatus {
-        Dead,
-        Alive
-    };
+    enum class SnakeStatus { Dead, Alive };
 
     class Board {
     private:
