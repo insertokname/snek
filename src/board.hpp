@@ -11,6 +11,11 @@
 #include "cell.hpp"
 
 namespace snek {
+    enum class SnakeStatus {
+        Dead,
+        Alive
+    };
+
     class Board {
     private:
         std::size_t _height, _width;
@@ -21,9 +26,7 @@ namespace snek {
     public:
         Board(std::size_t height, std::size_t width);
 
-        // returns 1 if the snake is dead
-        // return 2 if the snake should keep course
-        int move_snake(std::pair<int, int> direction);
+        SnakeStatus move_snake(std::pair<int, int> direction);
 
         const std::size_t height() const;
         const std::size_t width() const;

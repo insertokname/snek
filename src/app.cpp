@@ -62,21 +62,11 @@ void snek::App::run() {
             start = std::chrono::steady_clock::now();
             buffering = 0;
             switch (this->_board.move_snake(direction)) {
-                case 0:
+                case snek::SnakeStatus::Alive:
                     break;
-                case 1:
+                case snek::SnakeStatus::Dead:
                     std::cout << "you died!";
                     exit(0);
-                    break;
-                case 2:
-                    if (this->_board.move_snake(std::pair<int, int>(
-                            direction.first * -1,
-                            direction.second * -1))) {
-                        std::cout << "you died!";
-                        exit(0);
-                    }
-                    break;
-                default:
                     break;
             }
         }
