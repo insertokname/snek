@@ -1,8 +1,10 @@
 #include "app.hpp"
 
-#include <chrono>
-
 #include "draw.hpp"
+
+#ifdef __EMSCRIPTEN__
+#include "emscripten.h"
+#endif
 
 snek::App::App() : _board(snek::BOARD_HEIGHT, snek::BOARD_WIDTH) {
     int rendererFlags, windowFlags;
@@ -42,39 +44,53 @@ snek::App::App() : _board(snek::BOARD_HEIGHT, snek::BOARD_WIDTH) {
 }
 
 void snek::App::run() {
-    auto start = std::chrono::steady_clock::now();
-    std::pair<int, int> direction;
-    bool buffering = 0;
+#ifdef __EMSCRIPTEN__
+    // Create a static instance pointer that can be accessed from the
+    // callback
+    static snek::App* app_instance = this;
 
-    while (1) {
-        this->prepareScene();
+    // Create a static function that emscripten can call
+    static auto main_loop_callback = []() {
+        app_instance->game_tick();
+    };
+    emscripten_set_main_loop(main_loop_callback, 0, 1);
 
-        std::pair<int, int> raw_input;
-        this->doInput(raw_input);
+    // emscripten_set_main_loop(this->game_tick(), 0, 1);
+#endif
 
-        if (!buffering && (raw_input.first || raw_input.second)) {
-            direction = raw_input;
-            buffering = 1;
-        }
+#ifndef __EMSCRIPTEN__
+    while (true) this->game_tick();
+#endif
+}
 
-        if ((std::chrono::steady_clock::now() - start) >=
-            std::chrono::microseconds(snek::MOVE_SPEED)) {
-            start = std::chrono::steady_clock::now();
-            buffering = 0;
-            switch (this->_board.move_snake(direction)) {
-                case snek::SnakeStatus::Alive:
-                    break;
-                case snek::SnakeStatus::Dead:
-                    std::cout << "you died!";
-                    exit(0);
-                    break;
-            }
-        }
+void snek::App::game_tick() {
+    this->prepareScene();
 
-        snek::draw::draw_board(this, this->_board);
-        this->presentScene();
-        SDL_Delay(5);
+    std::pair<int, int> raw_input;
+    this->doInput(raw_input);
+
+    if (!buffering && (raw_input.first || raw_input.second)) {
+        direction = raw_input;
+        buffering = 1;
     }
+
+    if ((std::chrono::steady_clock::now() - start) >=
+        std::chrono::microseconds(snek::MOVE_SPEED)) {
+        start = std::chrono::steady_clock::now();
+        buffering = 0;
+        switch (this->_board.move_snake(direction)) {
+            case snek::SnakeStatus::Alive:
+                break;
+            case snek::SnakeStatus::Dead:
+                std::cout << "you died!";
+                exit(0);
+                break;
+        }
+    }
+
+    snek::draw::draw_board(this, this->_board);
+    this->presentScene();
+    SDL_Delay(5);
 }
 
 void snek::App::prepareScene() {
@@ -86,7 +102,7 @@ void snek::App::presentScene() {
     SDL_RenderPresent(this->renderer);
 }
 
-void snek::App::doInput(std::pair<int, int> &direction) {
+void snek::App::doInput(std::pair<int, int>& direction) {
     SDL_Event event;
 
     while (SDL_PollEvent(&event)) {

@@ -15,6 +15,9 @@
         name = "snek";
         pkgs = nixpkgs.legacyPackages.${system};
         src = ./.;
-      in { packages.default = pkgs.callPackage ./default.nix { }; });
+      in {
+        packages.default = pkgs.callPackage ./default.nix { };
+        devShells.wasm = import (./wasm.nix) pkgs;
+      });
 }
 

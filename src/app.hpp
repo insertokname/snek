@@ -1,5 +1,6 @@
 #pragma once
 
+#include <chrono>
 #include <iostream>
 
 #include "SDL.h"
@@ -17,8 +18,13 @@ namespace snek {
 
     private:
         Board _board;
+        void game_tick();
         void prepareScene();
         void presentScene();
         void doInput(std::pair<int, int> &direction);
+        std::chrono::steady_clock::time_point start =
+            std::chrono::steady_clock::now();
+        std::pair<int, int> direction;
+        bool buffering = 0;
     };
 }
