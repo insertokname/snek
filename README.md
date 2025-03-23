@@ -1,5 +1,5 @@
 # snek
-**unfinished** snek is a snake algorithm made in sdl that automatically solves every board that has at leas one even side
+snek is a snake algorithm made in sdl that automatically solves every board that has at least one even side
 
 **General structure**
 This project has two branches:
@@ -12,15 +12,15 @@ This project has two branches:
 
 ### Dependencies:
 
-**Dependencies if you are using the nix package manager**
+**macos or linux with nix package manager**
 - run `nix develop` or directly run or build with `nix run` or `nix build` 
 
-**Dependencies for Macos**
+**macos no nix**
 - [xcode tools](https://mac.install.guide/commandlinetools/3)
 - cmake (`brew install cmake`)
 - sdl2 (`brew install sdl2`)
 
-**Dependencies for game "OS"**:
+**game "OS"**:
 - [visual studio](https://cmake.org/download/)
 - cmake can be downloaded with scoop or choco or from [here](https://cmake.org/download/)
 - download **SDL2** (the version `SDL2-devel-2.30.1-VC.zip) from [here](https://github.com/libsdl-org/SDL/releases/tag/release-2.30.1)
