@@ -1,1 +1,0 @@
-em++ ./src/*.cpp -o snek.html -g -lm --bind -s USE_SDL=2 --use-preload-plugins --shell-file minimal_shell.html
