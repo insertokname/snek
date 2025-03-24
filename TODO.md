@@ -8,3 +8,4 @@ change from camel to snake case
 pointers to references
 change move_snake to return an enum
 maybe no more snek:: in front of each project element?
+compiler options for size / speed optimisations?
