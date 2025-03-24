@@ -21,7 +21,7 @@ This project has two branches:
 - sdl2 (`brew install sdl2`)
 
 **game "OS"**:
-- [visual studio](https://cmake.org/download/)
+- [visual studio](https://visualstudio.microsoft.com/downloads/)
 - cmake can be downloaded with scoop or choco or from [here](https://cmake.org/download/)
 - download **SDL2** (the version `SDL2-devel-2.30.1-VC.zip) from [here](https://github.com/libsdl-org/SDL/releases/tag/release-2.30.1)
 - setup CMAKE_PREFIX_PATH environment variable to point to the directory where sdl2 was extracted
