@@ -22,19 +22,23 @@ jobs:
       
       - name: build wasm
         run: |
-          mkdir build_wasm
+          mkdir build_game
+          mkdir build_algo
           mkdir output/algorithm -p
           mkdir output/game -p
-          cd build_wasm
 
+          cd build_game
           emcmake cmake .. -DSNEK_ALGORITHM=OFF
-          cmake --build . -j
+          cmake --build .
           cp src/snek* ../output/game
 
+          cd ../build_algo
           emcmake cmake .. -DSNEK_ALGORITHM=ON
-          cmake --build . -j
+          cmake --build .
           cp src/snek* ../output/algorithm
-          cp ../web/level_select.html ../output/index.html
+
+          cd ..
+          cp web/level_select.html output/index.html
 
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4
