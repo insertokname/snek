@@ -3,6 +3,11 @@ project(snek VERSION 0.1.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 
+
+if(SNEK_ALGORITHM)
+  add_compile_definitions(SNEK_ALGORITHM)
+endif()
+
 if(EMSCRIPTEN)
   set(CMAKE_EXECUTABLE_SUFFIX ".html")
   
