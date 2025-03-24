@@ -10,6 +10,8 @@ This project has two branches:
 - The game branch is the interactive version of this algorithm that you can play with you arrow keys.
 - The algorithm branch is the version that automatically completes the game on its own.
 
+# Native developement:
+
 ### Dependencies:
 
 **macos or linux with nix package manager**
@@ -36,5 +38,24 @@ Building is the same for all platforms (yes even for gaming os), you can simply 
 mkdir build
 cd build
 cmake ..
+cmake --build .
+```
+
+# Wasm development:
+
+### Dependencies:
+
+**if you use nix**:
+- run `nix develop .#wasm`
+**any other platform**
+- all of the native dependencies mentioned above
+- [emscripten](https://emscripten.org/)
+
+### Building:
+
+```
+mkdir build_wasm
+cd build_wasm
+emcmake cmake ..
 cmake --build .
 ```
