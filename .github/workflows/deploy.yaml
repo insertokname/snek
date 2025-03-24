@@ -1,0 +1,43 @@
+name: Build and Deploy
+on:
+  push:
+    branches:
+      - main
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: update apt
+        run: | 
+          sudo apt update
+          sudo apt install cmake libsdl2-dev -y
+
+      - name: Setup emsdk
+        uses: mymindstorm/setup-emsdk@v14
+        with:
+          version: 1.38.40
+          actions-cache-folder: 'emsdk-cache'
+      
+      - name: build wasm
+        run: |
+          mkdir build_wasm
+          mkdir output/algorithm -p
+          mkdir output/game -p
+          cd build_wasm
+
+          emcmake cmake .. -DSNEK_ALGORITHM=OFF
+          cmake --build . -j
+          cp src/snek* ../output/game
+
+          emcmake cmake .. -DSNEK_ALGORITHM=ON
+          cmake --build . -j
+          cp src/snek* ../output/algorithm
+          cp ../web/level_select.html ../output/index.html
+
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages
+          folder: output 
