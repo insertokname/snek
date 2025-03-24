@@ -37,6 +37,7 @@ snek::App::App() : _board(snek::BOARD_HEIGHT, snek::BOARD_WIDTH) {
         exit(1);
     }
 
+    SDL_SetHint(SDL_HINT_TOUCH_MOUSE_EVENTS, "1");
     SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
 
     this->renderer =
@@ -112,6 +113,11 @@ void snek::App::presentScene() {
 void snek::App::doInput(std::pair<int, int>& direction) {
     SDL_Event event;
 
+    static bool pressActive = false;
+    static int pressStartX = 0;
+    static int pressStartY = 0;
+    static const int MIN_SWIPE_DISTANCE = 30;
+
     while (SDL_PollEvent(&event)) {
         switch (event.type) {
             case SDL_QUIT:
@@ -129,6 +135,67 @@ void snek::App::doInput(std::pair<int, int>& direction) {
                     direction = std::pair<int, int>(0, 1);
                 }
             }
+
+            case SDL_MOUSEBUTTONDOWN: {
+                if (event.button.button == SDL_BUTTON_LEFT) {
+                    pressActive = true;
+                    pressStartX = event.button.x;
+                    pressStartY = event.button.y;
+                }
+                break;
+            }
+
+            case SDL_FINGERDOWN: {
+                pressActive = true;
+                pressStartX = event.tfinger.x *
+                              SDL_GetWindowSurface(this->window)->w;
+                pressStartY = event.tfinger.y *
+                              SDL_GetWindowSurface(this->window)->h;
+                break;
+            }
+
+            case SDL_MOUSEBUTTONUP:
+            case SDL_FINGERUP: {
+                if (pressActive ||
+                    pressActive &&
+                        event.button.button == SDL_BUTTON_LEFT) {
+                    int pressEndX;
+                    int pressEndY;
+                    if (pressActive &&
+                        event.button.button == SDL_BUTTON_LEFT) {
+                        pressEndX = event.button.x;
+                        pressEndY = event.button.y;
+                    } else {
+                        pressEndX =
+                            event.tfinger.x *
+                            SDL_GetWindowSurface(this->window)->w;
+                        pressEndY =
+                            event.tfinger.y *
+                            SDL_GetWindowSurface(this->window)->h;
+                    }
+                    int deltaX = pressEndX - pressStartX;
+                    int deltaY = pressEndY - pressStartY;
+
+                    if (abs(deltaX) > abs(deltaY) &&
+                        abs(deltaX) > MIN_SWIPE_DISTANCE) {
+                        if (deltaX > 0) {
+                            direction = std::pair<int, int>(0, 1);
+                        } else {
+                            direction = std::pair<int, int>(0, -1);
+                        }
+                    } else if (abs(deltaY) > MIN_SWIPE_DISTANCE) {
+                        if (deltaY > 0) {
+                            direction = std::pair<int, int>(1, 0);
+                        } else {
+                            direction = std::pair<int, int>(-1, 0);
+                        }
+                    }
+
+                    pressActive = false;
+                }
+                break;
+            }
+
             default:
                 break;
         }

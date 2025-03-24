@@ -14,7 +14,7 @@ namespace snek {
 #ifdef SNEK_ALGORITHM
     constexpr std::size_t MOVE_SPEED = 50000;
 #else
-    constexpr std::size_t MOVE_SPEED = 200000;
+    constexpr std::size_t MOVE_SPEED = 225000;
 #endif
 
 }
