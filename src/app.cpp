@@ -6,7 +6,13 @@
 #include "emscripten.h"
 #endif
 
+#ifdef SNEK_ALGORITHM
+snek::App::App()
+    : _board(snek::BOARD_HEIGHT, snek::BOARD_WIDTH),
+      _solver(_board, snek::BOARD_HEIGHT, snek::BOARD_WIDTH) {
+#else
 snek::App::App() : _board(snek::BOARD_HEIGHT, snek::BOARD_WIDTH) {
+#endif
     int rendererFlags, windowFlags;
 
     rendererFlags = SDL_RENDERER_ACCELERATED;
@@ -45,17 +51,12 @@ snek::App::App() : _board(snek::BOARD_HEIGHT, snek::BOARD_WIDTH) {
 
 void snek::App::run() {
 #ifdef __EMSCRIPTEN__
-    // Create a static instance pointer that can be accessed from the
-    // callback
     static snek::App* app_instance = this;
 
-    // Create a static function that emscripten can call
     static auto main_loop_callback = []() {
         app_instance->game_tick();
     };
     emscripten_set_main_loop(main_loop_callback, 0, 1);
-
-    // emscripten_set_main_loop(this->game_tick(), 0, 1);
 #endif
 
 #ifndef __EMSCRIPTEN__
@@ -77,6 +78,11 @@ void snek::App::game_tick() {
     if ((std::chrono::steady_clock::now() - start) >=
         std::chrono::microseconds(snek::MOVE_SPEED)) {
         start = std::chrono::steady_clock::now();
+#ifdef SNEK_ALGORITHM
+
+        auto next_move = _solver.get_next_move();
+        _board.move_snake(next_move);
+#else
         buffering = 0;
         switch (this->_board.move_snake(direction)) {
             case snek::SnakeStatus::Alive:
@@ -86,6 +92,7 @@ void snek::App::game_tick() {
                 exit(0);
                 break;
         }
+#endif
     }
 
     snek::draw::draw_board(this, this->_board);

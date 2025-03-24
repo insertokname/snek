@@ -16,7 +16,8 @@
         pkgs = nixpkgs.legacyPackages.${system};
         src = ./.;
       in {
-        packages.default = pkgs.callPackage ./default.nix { };
+        packages.game = pkgs.callPackage ./default.nix { game = false; };
+        packages.algorithm = pkgs.callPackage ./default.nix { game = true; };
         devShells.wasm = pkgs.callPackage ./wasm.nix { };
       });
 }

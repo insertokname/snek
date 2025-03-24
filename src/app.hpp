@@ -7,6 +7,7 @@
 #include "board.hpp"
 #include "cell.hpp"
 #include "config.hpp"
+#include "solver.hpp"
 
 namespace snek {
     class App {
@@ -18,6 +19,9 @@ namespace snek {
 
     private:
         Board _board;
+#ifdef SNEK_ALGORITHM
+        Solver _solver;
+#endif
         void game_tick();
         void prepareScene();
         void presentScene();

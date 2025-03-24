@@ -156,9 +156,6 @@
             }
         };
         Module.preRun = Module.preRun || [];
-        Module.preRun.push(function () {
-            ENV.SDL_EMSCRIPTEN_KEYBOARD_ELEMENT = "#canvas";
-        });
         window.addEventListener('load', function () {
             document.getElementById('canvas').focus();
 

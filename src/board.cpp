@@ -20,6 +20,7 @@ void snek::Board::_spawn_food() {
     std::srand(static_cast<unsigned int>(std::time(nullptr)));
 
     std::size_t index = std::rand() % valid_spaces.size();
+    this->_food_location = valid_spaces[index];
     this->_mat[valid_spaces[index].first]
               [valid_spaces[index].second] = snek::Cell::food;
 }
@@ -29,13 +30,13 @@ snek::Board::Board(std::size_t height, std::size_t width)
     this->_mat = std::vector<std::vector<Cell>>(
         height, std::vector<Cell>(width, Cell::empty));
 
-    this->_snake.push_front(std::pair<std::size_t, std::size_t>(
-        height / 2 - 1, width / 2 - 1));
-    this->_snake.push_front(std::pair<std::size_t, std::size_t>(
-        height / 2 - 1, width / 2));
+    this->_snake.push_front(
+        std::pair<std::size_t, std::size_t>(0, width / 2 - 1));
+    this->_snake.push_front(
+        std::pair<std::size_t, std::size_t>(0, width / 2));
 
-    this->_mat[height / 2 - 1][width / 2 - 1] = snek::Cell::tail;
-    this->_mat[height / 2 - 1][width / 2] = snek::Cell::head;
+    this->_mat[0][width / 2 - 1] = snek::Cell::tail;
+    this->_mat[0][width / 2] = snek::Cell::head;
 
     this->_spawn_food();
 }
@@ -106,4 +107,14 @@ const std::size_t snek::Board::width() const {
 
 const std::vector<std::vector<snek::Cell>> &snek::Board::mat() const {
     return this->_mat;
+}
+
+const std::deque<std::pair<std::size_t, std::size_t>> &
+snek::Board::get_snake() const {
+    return this->_snake;
+}
+
+const std::pair<std::size_t, std::size_t> &
+snek::Board::get_food_location() const {
+    return this->_food_location;
 }
