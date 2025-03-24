@@ -1,9 +1,6 @@
-pkgs:
-pkgs.mkShell rec {
+{ mkShell, emscripten, cmake }:
+mkShell rec {
   name = "snek";
 
-  packages = with pkgs; [ 
-    pkgs.emscripten
-    pkgs.gnumake
-  ];
+  packages = [ emscripten cmake ];
 }

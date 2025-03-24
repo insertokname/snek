@@ -17,7 +17,7 @@
         src = ./.;
       in {
         packages.default = pkgs.callPackage ./default.nix { };
-        devShells.wasm = import (./wasm.nix) pkgs;
+        devShells.wasm = pkgs.callPackage ./wasm.nix { };
       });
 }
 
