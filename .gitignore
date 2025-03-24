@@ -2,5 +2,6 @@ bin
 result
 .vscode
 build
+build_wasm
 out
 .vs
