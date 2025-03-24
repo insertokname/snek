@@ -3,5 +3,8 @@ result
 .vscode
 build
 build_wasm
+build_algo
+build_game
+output
 out
 .vs
