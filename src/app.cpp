@@ -183,10 +183,14 @@ void snek::App::m_do_input(std::pair<int, int>& direction) const {
 
             case SDL_FINGERDOWN: {
                 press_active = true;
-                press_start_x = (int)event.tfinger.x *
-                                SDL_GetWindowSurface(this->window)->w;
-                press_start_y = (int)event.tfinger.y *
-                                SDL_GetWindowSurface(this->window)->h;
+                press_start_x =
+                    (int)(event.tfinger.x *
+                          (float)SDL_GetWindowSurface(this->window)
+                              ->w);
+                press_start_y =
+                    (int)(event.tfinger.y *
+                          (float)SDL_GetWindowSurface(this->window)
+                              ->h);
                 break;
             }
 
