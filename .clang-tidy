@@ -1,0 +1,51 @@
+---
+Checks: "*,
+        -readability-isolate-declaration,
+        -abseil-*,
+        -altera-*,
+        -android-*,
+        -fuchsia-*,
+        -google-*,
+        -llvm*,
+        -modernize-use-trailing-return-type,
+        -zircon-*,
+        -readability-else-after-return,
+        -readability-static-accessed-through-instance,
+        -readability-avoid-const-params-in-decls,
+        -cppcoreguidelines-non-private-member-variables-in-classes,
+        -misc-non-private-member-variables-in-classes,
+        -no-recursion,
+        -readability-simplify-boolean-expr,
+        -readability-const-return-type,
+"
+WarningsAsErrors: ''
+FormatStyle:     none
+HeaderFilterRegex: './src/.*.hpp'
+
+CheckOptions:
+  - key: readability-identifier-length.IgnoredParameterNames
+    value: 'x|y|z|id|r|g|b|a'
+  - key: readability-identifier-length.IgnoredVariableNames
+    value: 'i|j|k|h|r|g|b|a'
+  - key: performance-move-const-arg.CheckTriviallyCopyableMove
+    value: 'true'
+  - key: readability-identifier-naming.ClassCase
+    value: 'CamelCase'
+  - key: readability-identifier-naming.ConstexprVariableCase
+    value: 'UPPER_CASE'
+  - key: readability-identifier-naming.EnumConstantCase
+    value: 'CamelCase'
+  - key: readability-identifier-naming.FunctionCase
+    value: 'lower_case'
+  - key: readability-identifier-naming.MemberCase
+    value: 'lower_case'
+  - key: readability-identifier-naming.PrivateMemberPrefix
+    value: 'm_'
+  - key: readability-identifier-naming.MethodCase
+    value: 'lower_case'
+  - key: readability-identifier-naming.PrivateMethodPrefix
+    value: 'm_'
+  - key: readability-identifier-naming.ParameterCase
+    value: 'lower_case'
+  - key: readability-identifier-naming.VariableCase
+    value: 'lower_case'

@@ -1,26 +1,28 @@
 #pragma once
 
+#include <memory>
+
 #include "board.hpp"
-#include "optional"
+#include "dimensions.hpp"
+#include "path.hpp"
 
 namespace snek {
     class Solver {
     public:
-        Solver(const Board& board, std::size_t height,
-               std::size_t width);
+        Solver(std::unique_ptr<Board> board,
+               const Dimensions &dimensions);
         std::pair<int, int> get_next_move();
 
     private:
-        const Board& _board;
-        std::vector<std::vector<std::size_t>> _path;
-        std::size_t _path_length;
-        std::size_t get_dist_to_food(
+        Path m_path;
+        std::unique_ptr<Board> m_board;
+        [[nodiscard]] std::size_t m_get_dist_to_food(
             std::pair<std::size_t, std::size_t> start_pos);
-        std::size_t get_dist_to_tail(
+        [[nodiscard]] std::size_t m_get_dist_to_tail(
             std::pair<std::size_t, std::size_t> start_pos);
-        std::size_t get_dist_to_point(
+        [[nodiscard]] std::size_t m_get_dist_to_point(
             std::pair<std::size_t, std::size_t> start_pos,
             std::pair<std::size_t, std::size_t> end_pos);
-        double get_board_to_snake_ratio();
+        [[nodiscard]] double m_get_board_to_snake_ratio();
     };
 }

@@ -1,6 +1,7 @@
 #pragma once
 
-#include "SDL.h"
+#include <cstdint>
+
 namespace snek {
-    enum class Cell { empty, tail, body, head, food };
+    enum class Cell : std::uint8_t { Empty, Tail, Body, Head, Food };
 }

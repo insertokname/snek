@@ -1,13 +1,12 @@
 #pragma once
 
-#include <chrono>
-#include <iostream>
+#include <SDL_render.h>
 
-#include "SDL.h"
 #include "board.hpp"
-#include "cell.hpp"
-#include "config.hpp"
+
+#ifdef SNEK_ALGORITHM
 #include "solver.hpp"
+#endif
 
 namespace snek {
     class App {
@@ -18,17 +17,13 @@ namespace snek {
         void run();
 
     private:
-        Board _board;
+        Board m_board;
 #ifdef SNEK_ALGORITHM
-        Solver _solver;
+        Solver m_solver;
 #endif
-        void game_tick();
-        void prepareScene();
-        void presentScene();
-        void doInput(std::pair<int, int> &direction);
-        std::chrono::steady_clock::time_point start =
-            std::chrono::steady_clock::now();
-        std::pair<int, int> direction;
-        bool buffering = 0;
+        void m_game_tick();
+        void m_prepare_scene() const;
+        void m_present_scene() const;
+        void m_do_input(std::pair<int, int> &direction) const;
     };
 }

@@ -1,3 +1,7 @@
+game over screen instead of exit()
+fps
+fix tail extend bug
+maybe change all std::size_t to int where it makes sense
 includes in cpp file if possible
 try to make private and public fields more consistent
 getters with consistent naming
@@ -9,3 +13,6 @@ pointers to references
 change move_snake to return an enum
 maybe no more snek:: in front of each project element?
 compiler options for size / speed optimisations?
+separate input functions
+separate path generation
+separate logic for game loop

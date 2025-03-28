@@ -1,17 +1,7 @@
-#include <stdlib.h>
-
-#include "SDL.h"
+#include "SDL_main.h"
 #include "app.hpp"
 
-int main(int argc, char *argv[]) {
-#ifdef SNEK_ALGORITHM
-    SDL_EventState(SDL_TEXTINPUT, SDL_DISABLE);
-    SDL_EventState(SDL_KEYDOWN, SDL_DISABLE);
-    SDL_EventState(SDL_KEYUP, SDL_DISABLE);
-#ifdef __EMSCRIPTEN__
-    SDL_SetHint(SDL_HINT_EMSCRIPTEN_KEYBOARD_ELEMENT, "#document");
-#endif
-#endif
+int main([[maybe_unused]] int argc, [[maybe_unused]] char *argv[]) {
     snek::App app;
     app.run();
     return 0;

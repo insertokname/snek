@@ -8,3 +8,4 @@ build_game
 output
 out
 .vs
+.cache
