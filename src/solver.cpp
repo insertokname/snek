@@ -16,15 +16,9 @@ snek::Solver::Solver(std::unique_ptr<Board> board,
     : m_board(std::move(board)), m_path(dimensions) {}
 
 std::pair<int, int> snek::Solver::get_next_move() {
-    // static constexpr std::array<int, 4> XDIR = {0, 1, 0, -1};
-    // static constexpr std::array<int, 4> YDIR = {1, 0, -1, 0};
-
     static constexpr std::array<std::pair<int, int>, 4> DIRECTIONS = {
-        std::pair{1, 0},   // down
-        std::pair{0, 1},   // right
-        std::pair{-1, 0},  // up
-        std::pair{0, -1}   // left
-    };
+        std::pair{1, 0}, std::pair{0, 1}, std::pair{-1, 0},
+        std::pair{0, -1}};
 
     std::pair<std::size_t, std::size_t> pos =
         this->m_board->get_snake().front();
@@ -103,5 +97,5 @@ std::size_t snek::Solver::m_get_dist_to_tail(
 
 double snek::Solver::m_get_board_to_snake_ratio() {
     return double(this->m_board->get_snake().size()) /
-           (this->m_board->height() * this->m_board->width());
+           double(this->m_board->height() * this->m_board->width());
 }

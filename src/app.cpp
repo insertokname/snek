@@ -5,7 +5,6 @@
 #include <iostream>
 
 #include "colors.hpp"
-#include "dimensions.hpp"
 
 #ifdef SNEK_ALGORITHM
 #include <memory>
