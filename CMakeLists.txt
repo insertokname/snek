@@ -18,6 +18,7 @@ if(EMSCRIPTEN)
     "-s USE_SDL_TTF=2"
     "--bind"
     "--use-preload-plugins"
+    "--preload-file ${CMAKE_SOURCE_DIR}/assets@/assets"
     "--shell-file ${CMAKE_SOURCE_DIR}/web/snek_shell.html"
   )
   

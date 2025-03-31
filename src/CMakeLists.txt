@@ -1,6 +1,11 @@
 file(GLOB SourceFiles CONFIGURE_DEPENDS "*.hpp" "*.cpp")
 add_executable(snek ${SourceFiles})
 
+add_custom_target(copy_assets
+    COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_LIST_DIR}/../copy_assets.cmake
+)
+add_dependencies(snek copy_assets)
+
 if(NOT EMSCRIPTEN)
   if(WIN32)
     target_link_libraries(snek SDL2::SDL2 SDL2::SDL2main  ${SDL2_TTF_LIBRARY})
