@@ -140,7 +140,8 @@ void snek::App::m_game_tick() {
 #ifdef SNEK_ALGORITHM
 
                 auto next_move = m_solver.get_next_move();
-                m_board.move_snake(next_move);
+                this->m_board.set_direction(next_move);
+                m_board.move_snake();
 #else
                 switch (this->m_board.move_snake()) {
                     case snek::MoveResultSnakeStatus::Alive:
