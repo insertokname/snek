@@ -12,4 +12,5 @@ namespace snek::draw {
     void draw_board(snek::App *app, const snek::Board &board);
     void set_draw_color(SDL_Renderer *renderer,
                         snek::colors::Color color);
+    void draw_game_over_screen(snek::App *app);
 }

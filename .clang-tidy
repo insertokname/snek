@@ -39,9 +39,13 @@ CheckOptions:
     value: 'lower_case'
   - key: readability-identifier-naming.MemberCase
     value: 'lower_case'
+  - key: readability-identifier-naming.PrivateMemberCase
+    value: 'lower_case'
   - key: readability-identifier-naming.PrivateMemberPrefix
     value: 'm_'
   - key: readability-identifier-naming.MethodCase
+    value: 'lower_case'
+  - key: readability-identifier-naming.PrivateMethodCase
     value: 'lower_case'
   - key: readability-identifier-naming.PrivateMethodPrefix
     value: 'm_'

@@ -45,35 +45,40 @@ snek::Board::Board(std::size_t height, std::size_t width)
 
     this->m_spawn_food();
 }
+void snek::Board::set_direction(std::pair<int, int> new_direction) {
+    if (new_direction.first != 0 || new_direction.second != 0) {
+        this->m_direction = new_direction;
+    }
+}
 
-snek::SnakeStatus snek::Board::move_snake(
-    std::pair<int, int> direction) {
-    if (!(direction.first != 0 || direction.second != 0)) {
-        return snek::SnakeStatus::Alive;
+snek::MoveResultSnakeStatus snek::Board::move_snake() {
+    if (this->m_direction.first == 0 &&
+        this->m_direction.second == 0) {
+        return snek::MoveResultSnakeStatus::Alive;
     }
     std::pair<int, int> new_head = this->m_snake.front(),
                         head_copy = this->m_snake.front(),
                         tail_copy = this->m_snake.back(),
                         second_segment =
                             *this->m_snake.begin().operator++();
-    new_head.first += direction.first;
-    new_head.second += direction.second;
+    new_head.first += this->m_direction.first;
+    new_head.second += this->m_direction.second;
 
     // the snake moved the oposite way and should keep course
     if (new_head == second_segment) {
-        direction.first *= -1;
-        direction.second *= -1;
+        this->m_direction.first *= -1;
+        this->m_direction.second *= -1;
         new_head = head_copy;
-        new_head.first += direction.first;
-        new_head.second += direction.second;
+        new_head.first += this->m_direction.first;
+        new_head.second += this->m_direction.second;
     }
-    
+
     // if the snake exits == dead
     if (!(0 <= new_head.first &&
           (unsigned int)new_head.first < this->m_height &&
           0 <= new_head.second &&
           (unsigned int)new_head.second < this->m_width)) {
-        return snek::SnakeStatus::Dead;
+        return snek::MoveResultSnakeStatus::Dead;
     }
 
     // if the snake finds a fruit extend it
@@ -86,12 +91,12 @@ snek::SnakeStatus snek::Board::move_snake(
             snek::Cell::Body;
         this->m_mat[new_head.first][new_head.second] =
             snek::Cell::Head;
-        return snek::SnakeStatus::Alive;
+        return snek::MoveResultSnakeStatus::Alive;
     }
     // if the snake colides with the Body == dead
     else if (this->m_mat[new_head.first][new_head.second] !=
              snek::Cell::Empty) {
-        return snek::SnakeStatus::Dead;
+        return snek::MoveResultSnakeStatus::Dead;
     }
 
     // delete old Tail, add new Head, update old Head to Body
@@ -105,7 +110,7 @@ snek::SnakeStatus snek::Board::move_snake(
     this->m_mat[this->m_snake.back().first]
                [this->m_snake.back().second] = snek::Cell::Tail;
     this->m_snake.emplace_front(new_head);
-    return snek::SnakeStatus::Alive;
+    return snek::MoveResultSnakeStatus::Alive;
 }
 
 std::size_t snek::Board::height() const {

@@ -4,6 +4,7 @@ project(snek VERSION 0.1.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${PROJECT_SOURCE_DIR}/cmake")
 
 if(SNEK_ALGORITHM)
   add_compile_definitions(SNEK_ALGORITHM)
@@ -25,7 +26,9 @@ if(EMSCRIPTEN)
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${EMSCRIPTEN_LINK_FLAGS}")
 else()
   find_package(SDL2 REQUIRED)
-  include_directories(${SDL2_INCLUDE_DIRS})
+  find_package(SDL2_ttf REQUIRED)
+
+  include_directories(${SDL2_INCLUDE_DIRS} ${SDL2_TTF_INCLUDE_DIR})
 endif()
 
 add_subdirectory(src)

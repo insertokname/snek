@@ -4,6 +4,7 @@
 #include <cmath>
 #include <iostream>
 
+#include "SDL_ttf.h"
 #include "colors.hpp"
 
 #ifdef SNEK_ALGORITHM
@@ -52,6 +53,12 @@ snek::App::App() : m_board(snek::BOARD_HEIGHT, snek::BOARD_WIDTH) {
         exit(1);
     }
 
+    if (TTF_Init() < 0) {
+        std::cout << "Couldn't initialize SDL_ttf: " << TTF_GetError()
+                  << "\n";
+        exit(1);
+    }
+
     this->window = SDL_CreateWindow(
         "snek", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
         snek::INITIAL_SCREEN_WIDTH, snek::INITIAL_SCREEN_HEIGHT,
@@ -77,18 +84,27 @@ snek::App::App() : m_board(snek::BOARD_HEIGHT, snek::BOARD_WIDTH) {
     }
 }
 
+snek::App::~App() {
+    TTF_Quit();
+    SDL_Quit();
+}
+
 void snek::App::run() {
 #ifdef __EMSCRIPTEN__
     static snek::App* app_instance = this;
 
     static auto main_loop_callback = []() {
+        if (app_instance->m_cur_state == GameState::Quitting) {
+            emscripten_cancel_main_loop();
+            return;
+        }
         app_instance->m_game_tick();
     };
     emscripten_set_main_loop(main_loop_callback, 0, 1);
 #endif
 
 #ifndef __EMSCRIPTEN__
-    while (true) {
+    while (this->m_cur_state != GameState::Quitting) {
         this->m_game_tick();
     }
 #endif
@@ -97,42 +113,50 @@ void snek::App::run() {
 void snek::App::m_game_tick() {
     this->m_prepare_scene();
 
-    std::pair<int, int> raw_input;
-    this->m_do_input(raw_input);
+    std::pair<int, int> raw_direction;
+    this->m_do_input(raw_direction);
 
-    static std::chrono::steady_clock::time_point start =
-        std::chrono::steady_clock::now();
-    static std::pair<int, int> direction;
-    static bool buffering = false;
-
-    if (!buffering &&
-        (raw_input.first != 0 || raw_input.second != 0)) {
-        direction = raw_input;
-        buffering = true;
+    if (!m_is_buffering &&
+        (raw_direction.first != 0 || raw_direction.second != 0)) {
+        this->m_board.set_direction(raw_direction);
+        m_is_buffering = true;
     }
 
-    if ((std::chrono::steady_clock::now() - start) >=
-        std::chrono::microseconds(snek::MOVE_SPEED)) {
-        start = std::chrono::steady_clock::now();
+    switch (this->m_cur_state) {
+        case GameState::Quitting:
+            break;
+        case GameState::SnakeDead:
+            snek::draw::draw_board(this, this->m_board);
+            snek::draw::draw_game_over_screen(this);
+            this->m_present_scene();
+            break;
+        case GameState::Running:
+            static std::chrono::steady_clock::time_point start =
+                std::chrono::steady_clock::now();
+
+            if ((std::chrono::steady_clock::now() - start) >=
+                std::chrono::microseconds(snek::MOVE_SPEED)) {
+                start = std::chrono::steady_clock::now();
 #ifdef SNEK_ALGORITHM
 
-        auto next_move = m_solver.get_next_move();
-        m_board.move_snake(next_move);
+                auto next_move = m_solver.get_next_move();
+                m_board.move_snake(next_move);
 #else
-        buffering = false;
-        switch (this->m_board.move_snake(direction)) {
-            case snek::SnakeStatus::Alive:
-                break;
-            case snek::SnakeStatus::Dead:
-                std::cout << "you died!";
-                exit(0);
-                break;
-        }
+                switch (this->m_board.move_snake()) {
+                    case snek::MoveResultSnakeStatus::Alive:
+                        break;
+                    case snek::MoveResultSnakeStatus::Dead:
+                        this->m_cur_state = GameState::SnakeDead;
+                        break;
+                }
 #endif
-    }
+            }
+            this->m_is_buffering = false;
 
-    snek::draw::draw_board(this, this->m_board);
-    this->m_present_scene();
+            snek::draw::draw_board(this, this->m_board);
+            this->m_present_scene();
+            break;
+    }
     SDL_Delay(5);
 }
 
@@ -145,7 +169,7 @@ void snek::App::m_present_scene() const {
     SDL_RenderPresent(this->renderer);
 }
 
-void snek::App::m_do_input(std::pair<int, int>& direction) const {
+void snek::App::m_do_input(std::pair<int, int>& direction) {
     SDL_Event event;
 
     static bool press_active = false;
@@ -156,10 +180,17 @@ void snek::App::m_do_input(std::pair<int, int>& direction) const {
     while (SDL_PollEvent(&event) != 0) {
         switch (event.type) {
             case SDL_QUIT:
-                exit(0);
+                this->m_cur_state = GameState::Quitting;
                 break;
 
             case SDL_KEYDOWN: {
+                if (this->m_cur_state == GameState::SnakeDead &&
+                    event.key.keysym.sym == SDLK_r) {
+                    this->m_board =
+                        Board(snek::BOARD_HEIGHT, snek::BOARD_WIDTH);
+                    this->m_cur_state = GameState::Running;
+                    return;
+                }
                 if (event.key.keysym.sym == SDLK_UP) {
                     direction = std::pair<int, int>(-1, 0);
                 } else if (event.key.keysym.sym == SDLK_DOWN) {
@@ -169,6 +200,7 @@ void snek::App::m_do_input(std::pair<int, int>& direction) const {
                 } else if (event.key.keysym.sym == SDLK_RIGHT) {
                     direction = std::pair<int, int>(0, 1);
                 }
+                break;
             }
 
             case SDL_MOUSEBUTTONDOWN: {

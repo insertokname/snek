@@ -1,10 +1,14 @@
 #include "draw.hpp"
 
+#include <SDL_pixels.h>
+#include <SDL_surface.h>
+
 #include <algorithm>
 #include <cstddef>
 
 #include "SDL_rect.h"
 #include "SDL_render.h"
+#include "SDL_ttf.h"
 #include "SDL_video.h"
 #include "app.hpp"
 #include "board.hpp"
@@ -12,8 +16,8 @@
 #include "colors.hpp"
 #include "config.hpp"
 
-inline void snek::draw::set_draw_color(SDL_Renderer *renderer,
-                                       snek::colors::Color color) {
+void snek::draw::set_draw_color(SDL_Renderer *renderer,
+                                snek::colors::Color color) {
     SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b,
                            color.a);
 }
@@ -83,4 +87,38 @@ void snek::draw::draw_board(snek::App *app,
             snek::draw::draw_cell(app, board, i, j);
         }
     }
+}
+
+void snek::draw::draw_game_over_screen(snek::App *app) {
+    set_draw_color(app->renderer, snek::colors::BODY_GREEN);
+
+    int width = 0, height = 0;
+    SDL_GetWindowSize(app->window, &width, &height);
+
+    SDL_Rect game_over_background;
+    game_over_background.x = width / 4;
+    game_over_background.y = height / 4;
+
+    game_over_background.w = width / 2;
+    game_over_background.h = height / 2;
+
+    TTF_Font *upheavtt = TTF_OpenFont("assets/upheavtt.ttf", 24);
+
+    SDL_Surface *surface =
+        TTF_RenderText_Solid(upheavtt, "test", {255, 255, 255});
+
+    SDL_Texture *texture =
+        SDL_CreateTextureFromSurface(app->renderer, surface);
+
+    int texW = 0;
+    int texH = 0;
+    SDL_QueryTexture(texture, nullptr, nullptr, &texW, &texH);
+    SDL_Rect dstrect = {0, 0, texW, texH};
+
+    SDL_RenderCopy(app->renderer, texture, nullptr, &dstrect);
+
+    SDL_DestroyTexture(texture);
+    SDL_FreeSurface(surface);
+
+    SDL_RenderFillRect(app->renderer, &game_over_background);
 }

@@ -16,3 +16,4 @@ compiler options for size / speed optimisations?
 separate input functions
 separate path generation
 separate logic for game loop
+break input into multiple functions for example: do directional input, do swipe input, do quit input
