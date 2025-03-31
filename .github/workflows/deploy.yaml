@@ -15,7 +15,7 @@ jobs:
       - name: update apt
         run: | 
           sudo apt update
-          sudo apt install cmake libsdl2-dev -y
+          sudo apt install cmake libsdl2-dev libsdl-ttf2.0-dev -y
 
       - name: Setup emsdk
         uses: mymindstorm/setup-emsdk@v14
