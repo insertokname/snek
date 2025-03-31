@@ -15,6 +15,7 @@ if(EMSCRIPTEN)
   
   set(EMSCRIPTEN_FLAGS 
     "-s USE_SDL=2"
+    "-s USE_SDL_TTF=2"
     "--bind"
     "--use-preload-plugins"
     "--shell-file ${CMAKE_SOURCE_DIR}/web/snek_shell.html"
