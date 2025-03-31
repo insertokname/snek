@@ -13,6 +13,6 @@ llvmPackages_16.stdenv.mkDerivation rec {
   cmakeFlags = [ "-DENABLE_TESTING=OFF" "-DENABLE_INSTALL=ON" ]
     ++ lib.optional game "-DSNEK_ALGORITHM=ON";
 
-  SDL2TTFDIR = "${SDL2_ttf}";
-  SDL2DIR = "${SDL2.dev}";
+  SDL2TTF_DIR = "${SDL2_ttf}";
+  SDL2_DIR = "${SDL2.dev}";
 }

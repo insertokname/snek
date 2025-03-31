@@ -42,11 +42,11 @@ entry initialized from old variable name")
 endif()
 find_path(SDL2_TTF_INCLUDE_DIR SDL_ttf.h
   HINTS
-    ENV SDL2TTFDIR
-    ENV SDL2DIR
+    ENV SDL2TTF_DIR
+    ENV SDL2_DIR
     ${SDL2_DIR}
   PATH_SUFFIXES SDL2
-                # path suffixes to search inside ENV{SDL2DIR}
+                # path suffixes to search inside ENV{SDL2_DIR}
                 include/SDL2 include
 )
 
@@ -63,8 +63,8 @@ endif()
 find_library(SDL2_TTF_LIBRARY
   NAMES SDL2_ttf
   HINTS
-    ENV SDL2TTFDIR
-    ENV SDL2DIR
+    ENV SDL2TTF_DIR
+    ENV SDL2_DIR
     ${SDL2_DIR}
   PATH_SUFFIXES lib ${VC_LIB_PATH_SUFFIX}
 )
@@ -73,8 +73,8 @@ if(WIN32)
   find_file(SDL2_TTF_DLL
     NAMES SDL2_ttf.dll
     HINTS 
-      ENV SDL2TTFDIR
-      ENV SDL2DIR
+      ENV SDL2TTF_DIR
+      ENV SDL2_DIR
       ${SDL2_DIR}
     PATH_SUFFIXES lib ${VC_LIB_PATH_SUFFIX}
   )

@@ -22,8 +22,8 @@ This project has two branches:
 - cmake (`brew install cmake`)
 - sdl2 (`brew install sdl2`)
 - sdl2_ttf (`brew install sdl2_ttf`)
-- set the SDL2DIR to the install location of the sdl 2 directory (for example you can do `brew info sdl2`. The output should contain a location that looks something like this: `/opt/homebrew/Cellar/sdl2/2.32.2` with your install path you should run `export SDL2DIR="<YOUR_SDL2_INSTALL_PATH>"` replacing `<YOUR_SDL2_INSTALL_PATH>` with your actual path)
-- do the same thing for SDL2TTFDIR (use `brew info sdl2_ttf`)
+- set the SDL2_DIR to the install location of the sdl 2 directory (for example you can do `brew info sdl2`. The output should contain a location that looks something like this: `/opt/homebrew/Cellar/sdl2/2.32.2` with your install path you should run `export SDL2_DIR="<YOUR_SDL2_INSTALL_PATH>"` replacing `<YOUR_SDL2_INSTALL_PATH>` with your actual path)
+- do the same thing for SDL2TTF_DIR (use `brew info sdl2_ttf`)
 - 
 **game "OS"**:
 - [visual studio](https://visualstudio.microsoft.com/downloads/)
@@ -31,8 +31,8 @@ This project has two branches:
 - download **SDL2** (the version `SDL2-devel-2.30.1-VC.zip) from [here](https://github.com/libsdl-org/SDL/releases/tag/release-2.30.1)
 - also download SDL2_ttf (the version `
 SDL2_ttf-devel-2.24.0-VC.zip`) from [here](https://github.com/libsdl-org/SDL_ttf/releases/tag/release-2.24.0)
-- set the SDL2DIR to the extracted location of the sdl 2 directory
-- also set SDL2TTFDIR to the extracted location of the sdl 2 ttf diretory
+- set the SDL2_DIR to the extracted location of the sdl 2 directory
+- also set SDL2TTF_DIR to the extracted location of the sdl 2 ttf diretory
 - setup CMAKE_PREFIX_PATH environment variable to point to the directory where sdl2 was extracted
 - stept are very well outlined in this [tutorial](https://youtu.be/jkmDBZzchbQ?feature=shared)
 
