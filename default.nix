@@ -1,6 +1,6 @@
 # Stolen from here: https://github.com/nixvital/nix-based-cpp-starterkit
 
-{ lib, llvmPackages_16, cmake, SDL2, clang-tools, game }:
+{ lib, llvmPackages_16, cmake, SDL2, SDL2_ttf, clang-tools, game }:
 llvmPackages_16.stdenv.mkDerivation rec {
   pname = "snek";
   version = "0.1.0";
@@ -12,4 +12,7 @@ llvmPackages_16.stdenv.mkDerivation rec {
 
   cmakeFlags = [ "-DENABLE_TESTING=OFF" "-DENABLE_INSTALL=ON" ]
     ++ lib.optional game "-DSNEK_ALGORITHM=ON";
+
+  SDL2TTFDIR = "${SDL2_ttf}";
+  SDL2DIR = "${SDL2.dev}";
 }

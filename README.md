@@ -21,6 +21,10 @@ This project has two branches:
 - [xcode tools](https://mac.install.guide/commandlinetools/3)
 - cmake (`brew install cmake`)
 - sdl2 (`brew install sdl2`)
+- sdl2_ttf (`brew install sdl2_ttf`)
+- set the SDL2DIR to the install location of the sdl 2 directory (for example you can do `brew info sdl2`. The output should contain a location that looks something like this: `/opt/homebrew/Cellar/sdl2/2.32.2` with your install path you should run `export SDL2DIR="<YOUR_SDL2_INSTALL_PATH>"` replacing `<YOUR_SDL2_INSTALL_PATH>` with your actual path)
+- do the same thing for SDL2TTFDIR (use `brew info sdl2_ttf`)
+- 
 **game "OS"**:
 - [visual studio](https://visualstudio.microsoft.com/downloads/)
 - cmake can be downloaded with scoop or choco or from [here](https://cmake.org/download/)
