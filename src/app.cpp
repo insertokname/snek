@@ -32,9 +32,12 @@
 namespace snek {
 #ifdef SNEK_ALGORITHM
     App::App()
-        : m_board(BOARD_HEIGHT, BOARD_WIDTH),
+        : m_board(game_config::BOARD_HEIGHT, game_config::BOARD_WIDTH),
           m_solver(std::unique_ptr<Board>(&m_board),
-                   Dimensions{.height = BOARD_HEIGHT, .width = BOARD_WIDTH}) {
+                   Dimensions{
+                       .height = game_config::BOARD_HEIGHT,
+                       .width = game_config::BOARD_WIDTH,
+                   }) {
         SDL_EventState(SDL_TEXTINPUT, SDL_DISABLE);
         SDL_EventState(SDL_KEYDOWN, SDL_DISABLE);
         SDL_EventState(SDL_KEYUP, SDL_DISABLE);
@@ -138,7 +141,6 @@ namespace snek {
                     std::chrono::microseconds(game_config::MOVE_SPEED)) {
                     start = std::chrono::steady_clock::now();
 #ifdef SNEK_ALGORITHM
-
                     auto next_move = m_solver.get_next_move();
                     this->m_board.set_direction(next_move);
                     m_board.move_snake();
