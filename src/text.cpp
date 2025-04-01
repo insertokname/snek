@@ -12,7 +12,7 @@
 namespace snek::text {
     SDL_Texture *create_text_texture(SDL_Renderer *renderer, const Text &text) {
         SDL_Surface *surface = TTF_RenderText_Solid(
-            text.font, text.content.cbegin(), text.color.to_sdl_color());
+            text.font, text.content.data(), text.color.to_sdl_color());
 
         return SDL_CreateTextureFromSurface(renderer, surface);
         SDL_FreeSurface(surface);
