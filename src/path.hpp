@@ -10,8 +10,8 @@ namespace snek {
     public:
         explicit Path(const Dimensions& dimensions);
 
-        [[nodiscard]] const std::vector<std::vector<std::size_t>>&
-        get_path() const {
+        [[nodiscard]] const std::vector<std::vector<std::size_t>>& get_path()
+            const {
             return this->m_path;
         }
         [[nodiscard]] const std::size_t get_path_len() const {

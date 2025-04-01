@@ -4,74 +4,72 @@
 
 #include "dimensions.hpp"
 
+namespace snek {
+    Path::Path(const Dimensions& dimensions) : m_dimensions(dimensions) {
+        m_path = std::vector<std::vector<std::size_t>>(
+            dimensions.height, std::vector<std::size_t>(dimensions.width));
 
-snek::Path::Path(const Dimensions& dimensions)
-    : m_dimensions(dimensions) {
-    m_path = std::vector<std::vector<std::size_t>>(
-        dimensions.height,
-        std::vector<std::size_t>(dimensions.width));
-
-    if (dimensions.height % 2 == 0) {
-        this->m_generate_horizontal_path();
-    } else if (dimensions.width % 2 == 0) {
-        this->m_generate_vertical_path();
-    } else {
-        std::cout << "Both sides of the board are odd!\n"
-                  << "Can't generate hamiltonian cycle!\n"
-                  << "Exiting!\n";
-        exit(1);
-    }
-}
-
-void snek::Path::m_generate_horizontal_path() {
-    for (int i = (int)(this->m_dimensions.height) - 1; i >= 0; i--) {
-        m_path[i][0] = this->m_path_length++;
-    }
-    for (int j = 1; j < this->m_dimensions.width; j++) {
-        m_path[0][j] = this->m_path_length++;
-    }
-
-    int j = (int)(this->m_dimensions.width) - 1;
-    int i = 1;
-    while (j > 0) {
-        if (i == 1) {
-            for (; i < this->m_dimensions.height; i++) {
-                m_path[i][j] = this->m_path_length++;
-            }
-            i = (int)(this->m_dimensions.height) - 1;
+        if (dimensions.height % 2 == 0) {
+            this->m_generate_horizontal_path();
+        } else if (dimensions.width % 2 == 0) {
+            this->m_generate_vertical_path();
         } else {
-            for (; i >= 1; i--) {
-                m_path[i][j] = this->m_path_length++;
-            }
-            i = 1;
+            std::cout << "Both sides of the board are odd!\n"
+                      << "Can't generate hamiltonian cycle!\n"
+                      << "Exiting!\n";
+            exit(1);
         }
-        j--;
-    }
-}
-
-void snek::Path::m_generate_vertical_path() {
-    for (int j = (int)(this->m_dimensions.width) - 1; j >= 0; j--) {
-        m_path[this->m_dimensions.height - 1][j] =
-            this->m_path_length++;
-    }
-    for (int i = (int)(this->m_dimensions.height) - 2; i >= 0; i--) {
-        m_path[i][0] = this->m_path_length++;
     }
 
-    int j = 1;
-    int i = 0;
-    while (i < (int)(this->m_dimensions.height) - 1) {
-        if (j == 1) {
-            for (; j < this->m_dimensions.width; j++) {
-                m_path[i][j] = this->m_path_length++;
-            }
-            j = (int)(this->m_dimensions.width) - 1;
-        } else {
-            for (; j >= 1; j--) {
-                m_path[i][j] = this->m_path_length++;
-            }
-            j = 1;
+    void Path::m_generate_horizontal_path() {
+        for (int i = (int)(this->m_dimensions.height) - 1; i >= 0; i--) {
+            m_path[i][0] = this->m_path_length++;
         }
-        i++;
+        for (int j = 1; j < this->m_dimensions.width; j++) {
+            m_path[0][j] = this->m_path_length++;
+        }
+
+        int j = (int)(this->m_dimensions.width) - 1;
+        int i = 1;
+        while (j > 0) {
+            if (i == 1) {
+                for (; i < this->m_dimensions.height; i++) {
+                    m_path[i][j] = this->m_path_length++;
+                }
+                i = (int)(this->m_dimensions.height) - 1;
+            } else {
+                for (; i >= 1; i--) {
+                    m_path[i][j] = this->m_path_length++;
+                }
+                i = 1;
+            }
+            j--;
+        }
+    }
+
+    void Path::m_generate_vertical_path() {
+        for (int j = (int)(this->m_dimensions.width) - 1; j >= 0; j--) {
+            m_path[this->m_dimensions.height - 1][j] = this->m_path_length++;
+        }
+        for (int i = (int)(this->m_dimensions.height) - 2; i >= 0; i--) {
+            m_path[i][0] = this->m_path_length++;
+        }
+
+        int j = 1;
+        int i = 0;
+        while (i < (int)(this->m_dimensions.height) - 1) {
+            if (j == 1) {
+                for (; j < this->m_dimensions.width; j++) {
+                    m_path[i][j] = this->m_path_length++;
+                }
+                j = (int)(this->m_dimensions.width) - 1;
+            } else {
+                for (; j >= 1; j--) {
+                    m_path[i][j] = this->m_path_length++;
+                }
+                j = 1;
+            }
+            i++;
+        }
     }
 }

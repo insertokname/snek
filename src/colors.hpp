@@ -2,13 +2,28 @@
 
 #include <cstdint>
 
+#include "SDL_pixels.h"
+
 namespace snek::colors {
     struct Color {
         uint8_t r, g, b, a;
+        [[nodiscard]] constexpr inline SDL_Color to_sdl_color() const {
+            return {
+                .r = r,
+                .g = g,
+                .b = b,
+                .a = a,
+            };
+        }
     };
 
-    consteval Color rgba(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
-        return {.r = r, .g = g, .b = b, .a = a};
+    constexpr Color rgba(uint8_t r, uint8_t g, uint8_t b, uint8_t a) {
+        return {
+            .r = r,
+            .g = g,
+            .b = b,
+            .a = a,
+        };
     }
 
     constexpr Color BLACK = rgba(0, 0, 0, 255);

@@ -22,13 +22,11 @@ namespace snek {
         [[nodiscard]] std::size_t width() const;
         [[nodiscard]] const std::pair<std::size_t, std::size_t>&
         get_food_location() const;
-        [[nodiscard]] const std::vector<std::vector<snek::Cell>>&
-        mat() const;
-        [[nodiscard]] const std::deque<
-            std::pair<std::size_t, std::size_t>>&
+        [[nodiscard]] const std::vector<std::vector<snek::Cell>>& mat() const;
+        [[nodiscard]] const std::deque<std::pair<std::size_t, std::size_t>>&
         get_snake() const;
 
-        void set_direction(std::pair<int,int> new_direction);
+        void set_direction(std::pair<int, int> new_direction);
 
     private:
         std::pair<int, int> m_direction;
