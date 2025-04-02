@@ -9,11 +9,10 @@
 
 #include "board.hpp"
 #include "config.hpp"
-#include "dimensions.hpp"
 
 namespace snek {
-    Solver::Solver(std::unique_ptr<Board> board, const Dimensions& dimensions)
-        : m_board(std::move(board)), m_path(dimensions) {}
+    Solver::Solver(std::unique_ptr<Board> board)
+        : m_path(board->get_size()), m_board(std::move(board)) {}
 
     std::pair<int, int> Solver::get_next_move() {
         static constexpr std::array<std::pair<int, int>, 4> DIRECTIONS = {
@@ -39,8 +38,8 @@ namespace snek {
         for (const auto& [ydir, xdir] : DIRECTIONS) {
             int ynew = (int)(pos.first) + ydir, xnew = (int)(pos.second) + xdir;
 
-            if (((0 <= ynew && ynew < this->m_board->height()) &&
-                 (0 <= xnew && xnew < this->m_board->width())) &&
+            if (((0 <= ynew && ynew < this->m_board->get_size().height) &&
+                 (0 <= xnew && xnew < this->m_board->get_size().width)) &&
                 (this->m_board->mat()[ynew][xnew] == Cell::Empty ||
                  this->m_board->mat()[ynew][xnew] == Cell::Food)) {
                 std::size_t dist_food =
@@ -98,6 +97,7 @@ namespace snek {
 
     double Solver::m_get_board_to_snake_ratio() {
         return double(this->m_board->get_snake().size()) /
-               double(this->m_board->height() * this->m_board->width());
+               double(this->m_board->get_size().height *
+                      this->m_board->get_size().width);
     }
 }

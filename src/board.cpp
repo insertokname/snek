@@ -7,12 +7,13 @@
 #include <vector>
 
 #include "cell.hpp"
+#include "dimensions.hpp"
 
 namespace snek {
     void Board::m_spawn_food() {
         std::vector<std::pair<std::size_t, std::size_t>> valid_spaces;
-        for (std::size_t i = 0; i < this->m_height; i++) {
-            for (std::size_t j = 0; j < this->m_width; j++) {
+        for (std::size_t i = 0; i < this->m_board_size.height; i++) {
+            for (std::size_t j = 0; j < this->m_board_size.width; j++) {
                 if (this->m_mat[i][j] == Cell::Empty) {
                     valid_spaces.emplace_back(i, j);
                 }
@@ -22,7 +23,7 @@ namespace snek {
         if (valid_spaces.empty()) {
             std::cout << "No more spaces left to spawn Food!\nYou "
                          "probably won!\n";
-            exit(0);
+            std::exit(0);
         }
 
         std::srand(static_cast<unsigned int>(std::time(nullptr)));
@@ -33,16 +34,16 @@ namespace snek {
             Cell::Food;
     }
 
-    Board::Board(std::size_t height, std::size_t width)
-        : m_width(width), m_height(height) {
+    Board::Board(const Dimensions &board_size) : m_board_size(board_size) {
         this->m_mat = std::vector<std::vector<Cell>>(
-            height, std::vector<Cell>(width, Cell::Empty));
+            board_size.height,
+            std::vector<Cell>(board_size.width, Cell::Empty));
 
-        this->m_snake.emplace_front(0, (width / 2) - 1);
-        this->m_snake.emplace_front(0, width / 2);
+        this->m_snake.emplace_front(0, (board_size.width / 2) - 1);
+        this->m_snake.emplace_front(0, board_size.width / 2);
 
-        this->m_mat[0][(width / 2) - 1] = Cell::Tail;
-        this->m_mat[0][width / 2] = Cell::Head;
+        this->m_mat[0][(board_size.width / 2) - 1] = Cell::Tail;
+        this->m_mat[0][board_size.width / 2] = Cell::Head;
 
         this->m_spawn_food();
     }
@@ -75,9 +76,9 @@ namespace snek {
 
         // if the snake exits == dead
         if (!(0 <= new_head.first &&
-              (unsigned int)new_head.first < this->m_height &&
+              (unsigned int)new_head.first < this->m_board_size.height &&
               0 <= new_head.second &&
-              (unsigned int)new_head.second < this->m_width)) {
+              (unsigned int)new_head.second < this->m_board_size.width)) {
             return MoveResultSnakeStatus::Dead;
         }
 
@@ -108,14 +109,9 @@ namespace snek {
         return MoveResultSnakeStatus::Alive;
     }
 
-    std::size_t Board::height() const {
-        return this->m_height;
+    Dimensions Board::get_size() const {
+        return this->m_board_size;
     }
-
-    std::size_t Board::width() const {
-        return this->m_width;
-    }
-
     const std::vector<std::vector<Cell>> &Board::mat() const {
         return this->m_mat;
     }

@@ -5,13 +5,13 @@
 #include "dimensions.hpp"
 
 namespace snek {
-    Path::Path(const Dimensions& dimensions) : m_dimensions(dimensions) {
+    Path::Path(const Dimensions& board_size) : m_dimensions(board_size) {
         m_path = std::vector<std::vector<std::size_t>>(
-            dimensions.height, std::vector<std::size_t>(dimensions.width));
+            board_size.height, std::vector<std::size_t>(board_size.width));
 
-        if (dimensions.height % 2 == 0) {
+        if (board_size.height % 2 == 0) {
             this->m_generate_horizontal_path();
-        } else if (dimensions.width % 2 == 0) {
+        } else if (board_size.width % 2 == 0) {
             this->m_generate_vertical_path();
         } else {
             std::cout << "Both sides of the board are odd!\n"

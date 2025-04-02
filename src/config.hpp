@@ -2,14 +2,19 @@
 
 #include <cstddef>
 
-namespace snek {
-    namespace game_config
+#include "dimensions.hpp"
 
-    {
+namespace snek {
+    namespace game_config {
         constexpr double FOLLOW_EXACT_THRESHOLD = 0.60;
-        constexpr std::size_t INITIAL_SCREEN_WIDTH = 1280,
-                              INITIAL_SCREEN_HEIGHT = 720, BOARD_HEIGHT = 10,
-                              BOARD_WIDTH = 20;
+        constexpr Dimensions INITIAL_SCREEN_SIZE = Dimensions{
+            .height = 720,
+            .width = 1280,
+        };
+        constexpr Dimensions BOARD_SIZE = Dimensions{
+            .height = 10,
+            .width = 20,
+        };
 #ifdef __EMSCRIPTEN__
         constexpr std::size_t PADDING = 0;
 #else

@@ -8,7 +8,7 @@
 namespace snek {
     class Path {
     public:
-        explicit Path(const Dimensions& dimensions);
+        explicit Path(const Dimensions& board_size);
 
         [[nodiscard]] const std::vector<std::vector<std::size_t>>& get_path()
             const {
