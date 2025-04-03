@@ -1,5 +1,7 @@
 #pragma once
 
+#include <SDL_surface.h>
+
 #include <string_view>
 
 #include "SDL_ttf.h"
@@ -7,6 +9,12 @@
 #include "rect_tools.hpp"
 
 namespace snek::text {
+
+    struct TextCreateResult {
+        SDL_Texture *texture;
+        SDL_Surface *surface;
+        ~TextCreateResult();
+    };
 
     struct TextStyleParams {
         colors::Color color;
