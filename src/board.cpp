@@ -92,14 +92,14 @@ namespace snek {
             return MoveResultSnakeStatus::Alive;
         }
         // if the snake colides with the Body == dead
-        else if (this->m_mat[new_head.first][new_head.second] != Cell::Empty) {
+        else if (this->m_mat[new_head.first][new_head.second] != Cell::Empty && this->m_mat[new_head.first][new_head.second] != Cell::Tail) {
             return MoveResultSnakeStatus::Dead;
         }
 
         // delete old Tail, add new Head, update old Head to Body
+        this->m_mat[tail_copy.first][tail_copy.second] = Cell::Empty;
         this->m_mat[head_copy.first][head_copy.second] = Cell::Body;
         this->m_mat[new_head.first][new_head.second] = Cell::Head;
-        this->m_mat[tail_copy.first][tail_copy.second] = Cell::Empty;
 
         // add new Tail
         this->m_snake.pop_back();
