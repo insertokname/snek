@@ -1,4 +1,4 @@
-#include "context.hpp"
+#include "video_context.hpp"
 
 #include <iostream>
 #include <ostream>
@@ -8,7 +8,7 @@
 #include "dimensions.hpp"
 
 namespace snek {
-    Context::Context(const Dimensions& window_size) {
+    VideoContext::VideoContext(const Dimensions& window_size) {
         int renderer_flags = SDL_RENDERER_ACCELERATED;
         int window_flags = SDL_WINDOW_RESIZABLE;
 
@@ -49,7 +49,7 @@ namespace snek {
         }
     }
 
-    Context::~Context() {
+    VideoContext::~VideoContext() {
         TTF_Quit();
         SDL_Quit();
     }

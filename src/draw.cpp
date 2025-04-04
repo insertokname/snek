@@ -15,7 +15,7 @@
 #include "cell.hpp"
 #include "colors.hpp"
 #include "config.hpp"
-#include "context.hpp"
+#include "video_context.hpp"
 #include "rect_tools.hpp"
 #include "text.hpp"
 
@@ -24,12 +24,12 @@ namespace snek::draw {
         SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
     }
 
-    void draw_cell(const Context &context,
+    void draw_cell(const VideoContext &video_context,
                    const Board &board,
                    std::size_t y,
                    std::size_t x) {
         int width = 0, height = 0;
-        SDL_GetWindowSize(context.window, &width, &height);
+        SDL_GetWindowSize(video_context.window, &width, &height);
         width -= game_config::PADDING * 2;
         height -= game_config::PADDING * 2;
         const std::size_t cell_width = width / board.get_size().width;
@@ -57,48 +57,48 @@ namespace snek::draw {
                 break;
 
             case Cell::Tail:
-                set_draw_color(context.renderer, colors::TAIL_GREEN);
-                SDL_RenderFillRect(context.renderer, &rect);
+                set_draw_color(video_context.renderer, colors::TAIL_GREEN);
+                SDL_RenderFillRect(video_context.renderer, &rect);
                 break;
 
             case Cell::Body:
-                set_draw_color(context.renderer, colors::BODY_GREEN);
-                SDL_RenderFillRect(context.renderer, &rect);
+                set_draw_color(video_context.renderer, colors::BODY_GREEN);
+                SDL_RenderFillRect(video_context.renderer, &rect);
                 break;
 
             case Cell::Head:
-                set_draw_color(context.renderer, colors::HEAD_GREEN);
-                SDL_RenderFillRect(context.renderer, &rect);
+                set_draw_color(video_context.renderer, colors::HEAD_GREEN);
+                SDL_RenderFillRect(video_context.renderer, &rect);
                 break;
 
             case Cell::Food:
-                set_draw_color(context.renderer, colors::FOOD_RED);
-                SDL_RenderFillRect(context.renderer, &rect);
+                set_draw_color(video_context.renderer, colors::FOOD_RED);
+                SDL_RenderFillRect(video_context.renderer, &rect);
                 break;
 
             default:
-                set_draw_color(context.renderer, colors::BORDER_WHITE);
-                SDL_RenderFillRect(context.renderer, &rect);
+                set_draw_color(video_context.renderer, colors::BORDER_WHITE);
+                SDL_RenderFillRect(video_context.renderer, &rect);
                 break;
         }
-        set_draw_color(context.renderer, colors::BORDER_WHITE);
-        SDL_RenderDrawRect(context.renderer, &rect);
+        set_draw_color(video_context.renderer, colors::BORDER_WHITE);
+        SDL_RenderDrawRect(video_context.renderer, &rect);
     }
 
-    void draw_board(const Context &context, const Board &board) {
+    void draw_board(const VideoContext &video_context, const Board &board) {
         for (std::size_t i = 0; i < board.get_size().height; i++) {
             for (std::size_t j = 0; j < board.get_size().width; j++) {
-                draw_cell(context, board, i, j);
+                draw_cell(video_context, board, i, j);
             }
         }
     }
 
-    void draw_game_over_screen(Context &context) {
+    void draw_game_over_screen(VideoContext &video_context) {
         SDL_Rect screen_rect{
             .x = 0,
             .y = 0,
         };
-        SDL_GetWindowSize(context.window, &screen_rect.w, &screen_rect.h);
+        SDL_GetWindowSize(video_context.window, &screen_rect.w, &screen_rect.h);
 
         SDL_Rect game_over_background_rect;
         rect_tools::apply_rect_style(
@@ -116,11 +116,11 @@ namespace snek::draw {
                                          .border_thickness = 4,
                                      }));
 
-        set_draw_color(context.renderer, colors::BORDER_WHITE);
-        SDL_RenderFillRect(context.renderer, &game_over_border_background_rect);
+        set_draw_color(video_context.renderer, colors::BORDER_WHITE);
+        SDL_RenderFillRect(video_context.renderer, &game_over_border_background_rect);
 
-        set_draw_color(context.renderer, colors::BLACK);
-        SDL_RenderFillRect(context.renderer, &game_over_background_rect);
+        set_draw_color(video_context.renderer, colors::BLACK);
+        SDL_RenderFillRect(video_context.renderer, &game_over_background_rect);
 
         TTF_Font *upheavtt = TTF_OpenFont("assets/upheavtt.ttf",
                                           gui_config::GAME_OVER_FONT_SIZE);
@@ -137,7 +137,7 @@ namespace snek::draw {
                 .relative_x_pos = gui_config::GAME_OVER_TEXT_X_POS,
                 .relative_y_pos = gui_config::GAME_OVER_TITLE_Y_POS,
             }),
-            context.renderer);
+            video_context.renderer);
 
         text::draw_text_in_rect(
             text::Text("press 'r'", style),
@@ -146,7 +146,7 @@ namespace snek::draw {
                 .relative_x_pos = gui_config::GAME_OVER_TEXT_X_POS,
                 .relative_y_pos = gui_config::GAME_OVER_SUBHEADING1_Y_POS,
             }),
-            context.renderer);
+            video_context.renderer);
 
         text::draw_text_in_rect(
             text::Text("to try again!", style),
@@ -155,7 +155,7 @@ namespace snek::draw {
                 .relative_x_pos = gui_config::GAME_OVER_TEXT_X_POS,
                 .relative_y_pos = gui_config::GAME_OVER_SUBHEADING2_Y_POS,
             }),
-            context.renderer);
+            video_context.renderer);
 
         TTF_CloseFont(upheavtt);
     }

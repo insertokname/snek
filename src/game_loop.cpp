@@ -1,5 +1,6 @@
 #include "game_loop.hpp"
 
+#include <chrono>
 #include <SDL_events.h>
 #include <SDL_timer.h>
 

@@ -4,11 +4,11 @@
 #include "dimensions.hpp"
 
 namespace snek {
-    class Context {
+    class VideoContext {
     public:
         SDL_Renderer *renderer = nullptr;
         SDL_Window *window = nullptr;
-        explicit Context(const Dimensions &window_size);
-        ~Context();
+        explicit VideoContext(const Dimensions &window_size);
+        ~VideoContext();
     };
 }

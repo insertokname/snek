@@ -1,6 +1,6 @@
 #pragma once
 
-#include "context.hpp"
+#include "video_context.hpp"
 #include "dimensions.hpp"
 #include "game_loop.hpp"
 
@@ -9,10 +9,10 @@ namespace snek {
     public:
         explicit App(const Dimensions &board_size,
                      const Dimensions &window_size)
-            : m_game_loop(board_size, Context(window_size)) {}
+            : m_game_loop(board_size, VideoContext(window_size)) {}
 
-        explicit App(const Dimensions &board_size, const Context &context)
-            : m_game_loop(board_size, context) {}
+        explicit App(const Dimensions &board_size, const VideoContext &video_context)
+            : m_game_loop(board_size, video_context) {}
         void run();
 
     private:
