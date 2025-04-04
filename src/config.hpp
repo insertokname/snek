@@ -29,6 +29,8 @@ namespace snek {
     }
 
     namespace gui_config {
+        constexpr double BOARD_XY_POS = 0.5;
+
         constexpr double GAME_OVER_TEXT_X_POS = 0.5;
         constexpr double GAME_OVER_TITLE_Y_POS = 0.3;
         constexpr double GAME_OVER_SUBHEADING1_Y_POS = 0.6;

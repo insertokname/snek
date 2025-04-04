@@ -10,14 +10,13 @@
 #include "SDL_rect.h"
 #include "SDL_render.h"
 #include "SDL_ttf.h"
-#include "SDL_video.h"
 #include "board.hpp"
 #include "cell.hpp"
 #include "colors.hpp"
 #include "config.hpp"
-#include "video_context.hpp"
 #include "rect_tools.hpp"
 #include "text.hpp"
+#include "video_context.hpp"
 
 namespace snek::draw {
     void set_draw_color(SDL_Renderer *renderer, colors::Color color) {
@@ -26,63 +25,80 @@ namespace snek::draw {
 
     void draw_cell(const VideoContext &video_context,
                    const Board &board,
-                   std::size_t y,
-                   std::size_t x) {
-        int width = 0, height = 0;
-        SDL_GetWindowSize(video_context.window, &width, &height);
-        width -= game_config::PADDING * 2;
-        height -= game_config::PADDING * 2;
-        const std::size_t cell_width = width / board.get_size().width;
-        const std::size_t cell_height = height / board.get_size().height;
+                   std::size_t cell_y_pos,
+                   std::size_t cell_x_pos) {
+        // TODO: move this setup out of the draw_cell function to improve performance
+        SDL_Rect screen_rect;
+        rect_tools::get_screen_rect(video_context.window, screen_rect);
+
+        SDL_Rect out_game_board_rect;
+        rect_tools::apply_rect_style(out_game_board_rect,
+                                     screen_rect,
+                                     rect_tools::SymmetrictPaddingRectStyle(
+                                         {.x_padding = game_config::PADDING,
+                                          .y_padding = game_config::PADDING}));
+
+        const std::size_t cell_width =
+            out_game_board_rect.w / board.get_size().width;
+        const std::size_t cell_height =
+            out_game_board_rect.h / board.get_size().height;
         const std::size_t cell_size = std::min(cell_height, cell_width);
 
-        const double width_start_offset =
-            ((width - ((double)(cell_size) * (double)board.get_size().width)) /
-             2.0) +
-            game_config::PADDING;
-        const double height_start_offset =
-            ((height -
-              ((double)(cell_size) * (double)board.get_size().height)) /
-             2.0) +
-            game_config::PADDING;
+        out_game_board_rect.w =
+            static_cast<int>(cell_size * board.get_size().width);
+        out_game_board_rect.h =
+            static_cast<int>(cell_size * board.get_size().height);
 
-        SDL_Rect rect;
-        rect.x = (int)x * (int)cell_size + (int)width_start_offset;
-        rect.y = (int)y * (int)cell_size + (int)height_start_offset;
-        rect.w = (int)cell_size;
-        rect.h = (int)cell_size;
+        rect_tools::apply_rect_style(
+            out_game_board_rect,
+            screen_rect,
+            rect_tools::RelativePositionedRectStyle({
+                .relative_x_pos = gui_config::BOARD_XY_POS,
+                .relative_y_pos = gui_config::BOARD_XY_POS,
+            }));
 
-        switch (board.mat()[y][x]) {
+        const int screen_x_pos =
+            out_game_board_rect.x + static_cast<int>(cell_size * cell_x_pos);
+        const int screen_y_pos =
+            out_game_board_rect.y + static_cast<int>(cell_size * cell_y_pos);
+
+        SDL_Rect cell_rect;
+        cell_rect.x = screen_x_pos;
+        cell_rect.y = screen_y_pos;
+        cell_rect.w = (int)cell_size;
+        cell_rect.h = (int)cell_size;
+
+        switch (board.mat()[cell_y_pos][cell_x_pos]) {
             case Cell::Empty:
                 break;
 
             case Cell::Tail:
                 set_draw_color(video_context.renderer, colors::TAIL_GREEN);
-                SDL_RenderFillRect(video_context.renderer, &rect);
+                SDL_RenderFillRect(video_context.renderer, &cell_rect);
                 break;
 
             case Cell::Body:
                 set_draw_color(video_context.renderer, colors::BODY_GREEN);
-                SDL_RenderFillRect(video_context.renderer, &rect);
+                SDL_RenderFillRect(video_context.renderer, &cell_rect);
                 break;
 
             case Cell::Head:
                 set_draw_color(video_context.renderer, colors::HEAD_GREEN);
-                SDL_RenderFillRect(video_context.renderer, &rect);
+                SDL_RenderFillRect(video_context.renderer, &cell_rect);
                 break;
 
             case Cell::Food:
                 set_draw_color(video_context.renderer, colors::FOOD_RED);
-                SDL_RenderFillRect(video_context.renderer, &rect);
+                SDL_RenderFillRect(video_context.renderer, &cell_rect);
                 break;
 
             default:
                 set_draw_color(video_context.renderer, colors::BORDER_WHITE);
-                SDL_RenderFillRect(video_context.renderer, &rect);
+                SDL_RenderFillRect(video_context.renderer, &cell_rect);
                 break;
         }
         set_draw_color(video_context.renderer, colors::BORDER_WHITE);
-        SDL_RenderDrawRect(video_context.renderer, &rect);
+        SDL_RenderDrawRect(video_context.renderer, &cell_rect);
     }
 
     void draw_board(const VideoContext &video_context, const Board &board) {
@@ -94,11 +110,8 @@ namespace snek::draw {
     }
 
     void draw_game_over_screen(VideoContext &video_context) {
-        SDL_Rect screen_rect{
-            .x = 0,
-            .y = 0,
-        };
-        SDL_GetWindowSize(video_context.window, &screen_rect.w, &screen_rect.h);
+        SDL_Rect screen_rect;
+        rect_tools::get_screen_rect(video_context.window, screen_rect);
 
         SDL_Rect game_over_background_rect;
         rect_tools::apply_rect_style(
@@ -117,7 +130,8 @@ namespace snek::draw {
                                      }));
 
         set_draw_color(video_context.renderer, colors::BORDER_WHITE);
-        SDL_RenderFillRect(video_context.renderer, &game_over_border_background_rect);
+        SDL_RenderFillRect(video_context.renderer,
+                           &game_over_border_background_rect);
 
         set_draw_color(video_context.renderer, colors::BLACK);
         SDL_RenderFillRect(video_context.renderer, &game_over_background_rect);

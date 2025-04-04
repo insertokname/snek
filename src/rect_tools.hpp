@@ -1,6 +1,7 @@
 #pragma once
 
 #include "SDL_rect.h"
+#include "SDL_video.h"
 
 namespace snek::rect_tools {
     namespace rel_rect_tools {
@@ -114,8 +115,26 @@ namespace snek::rect_tools {
                      const SDL_Rect &parent_rect) const override;
     };
 
+    struct SymmetrictPaddingRectParams {
+        int x_padding;
+        int y_padding;
+    };
+    class SymmetrictPaddingRectStyle : public RectStyle {
+    public:
+        explicit SymmetrictPaddingRectStyle(
+            const SymmetrictPaddingRectParams &params)
+            : m_x_padding(params.x_padding), m_y_padding(params.y_padding) {}
+
+    private:
+        int m_x_padding;
+        int m_y_padding;
+        void m_apply(SDL_Rect &out_child_rect,
+                     const SDL_Rect &parent_rect) const override;
+    };
+
     void apply_rect_style(SDL_Rect &out_child_rect,
                           const SDL_Rect &parent_rect,
                           const RectStyle &style);
 
+    void get_screen_rect(SDL_Window *window, SDL_Rect &out_screen_rect);
 }

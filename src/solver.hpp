@@ -8,7 +8,7 @@
 namespace snek {
     class Solver {
     public:
-        Solver(std::unique_ptr<Board> board);
+        explicit Solver(std::unique_ptr<Board> board);
         std::pair<int, int> get_next_move();
 
     private:

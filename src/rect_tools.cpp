@@ -1,5 +1,7 @@
 #include "rect_tools.hpp"
 
+#include <SDL_video.h>
+
 #include <cmath>
 
 namespace snek::rect_tools {
@@ -79,9 +81,25 @@ namespace snek::rect_tools {
             out_child_rect, parent_rect, this->m_relative_y_pos);
     }
 
+    void SymmetrictPaddingRectStyle::m_apply(
+        SDL_Rect &out_child_rect,
+        const SDL_Rect &parent_rect) const {
+        out_child_rect.x = parent_rect.x + this->m_x_padding;
+        out_child_rect.y = parent_rect.y + this->m_y_padding;
+
+        out_child_rect.w = parent_rect.w - (this->m_x_padding * 2);
+        out_child_rect.h = parent_rect.h - (this->m_y_padding * 2);
+    }
+
     void apply_rect_style(SDL_Rect &out_child_rect,
                           const SDL_Rect &parent_rect,
                           const RectStyle &style) {
         style.m_apply(out_child_rect, parent_rect);
+    }
+
+    void get_screen_rect(SDL_Window *window, SDL_Rect &out_screen_rect) {
+        out_screen_rect.x = 0;
+        out_screen_rect.y = 0;
+        SDL_GetWindowSize(window, &out_screen_rect.w, &out_screen_rect.h);
     }
 }
