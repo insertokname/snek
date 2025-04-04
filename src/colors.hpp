@@ -7,7 +7,7 @@
 namespace snek::colors {
     struct Color {
         uint8_t r, g, b, a;
-        [[nodiscard]] constexpr inline SDL_Color to_sdl_color() const {
+        [[nodiscard]] constexpr SDL_Color to_sdl_color() const {
             return {
                 .r = r,
                 .g = g,
