@@ -11,6 +11,8 @@ This project is made using cmake and uses `#defines` for conditional compilation
 - if you just want to download everyhing all at once and don't really care about first build time and such you can try configuring you project using the `AUTO_DOWNLOAD_DEPS ON` option. This will automatically clone the repos locally, build what is needed and then link them. This is done using the cmake `FetchContent_Declare` function inside the build system.
 - to achieve this you have to either manually do `set(AUTO_DOWNLOAD_DEPS ON)` inside the root `CMakeLists.txt` file OR when configuring you can do the following:
 ```
+git clone https://github.com/insertokname/snek.git
+cd snek
 mkdir build
 cd build
 cmake .. -DAUTO_DOWNLOAD_DEPS=ON
@@ -88,6 +90,8 @@ SDL2TTF_DIR         C:\sdks\SDL2_ttf
 Building is the same for all platforms you can simply run the following:
 
 ```
+git clone https://github.com/insertokname/snek.git
+cd snek
 mkdir build
 cd build
 cmake ..
