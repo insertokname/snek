@@ -18,16 +18,16 @@ namespace snek {
     public:
         void game_tick();
         void do_input(std::pair<int, int>& direction);
-        explicit GameLoop(const Dimensions& dimensions,
-                          const VideoContext& video_context,
-                          GameContext* game_context)
+        GameLoop(const Dimensions& dimensions,
+                 const VideoContext& video_context,
+                 std::shared_ptr<GameContext> game_context)
             : m_board(dimensions),
 #ifdef SNEK_ALGORITHM
               m_solver(std::unique_ptr<Board>(&this->m_board)),
 #endif
               m_video_context(video_context),
               m_dimensions(dimensions),
-              m_game_context(game_context) {
+              m_game_context(std::move(game_context)) {
         }
 
     private:
@@ -36,7 +36,7 @@ namespace snek {
         bool m_is_buffering = false;
         Dimensions m_dimensions;
         VideoContext m_video_context;
-        GameContext* m_game_context;
+        std::shared_ptr<GameContext> m_game_context;
         Board m_board;
 #ifdef SNEK_ALGORITHM
         Solver m_solver;
