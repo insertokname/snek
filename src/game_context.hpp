@@ -22,8 +22,13 @@ namespace snek {
 
         [[__nodiscard__]] std::filesystem::path get_exe_path() const;
 
+#ifdef __EMSCRIPTEN__
         explicit GameContext(std::filesystem::path exe_path)
             : m_exe_path(std::move(exe_path)) {}
+#else
+        explicit GameContext(const std::filesystem::path &exe_path)
+            : m_exe_path(std::filesystem::canonical(exe_path)) {}
+#endif
 
     private:
         GameState m_cur_game_state = GameState::Running;
