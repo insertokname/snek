@@ -29,7 +29,7 @@ cmake --build . --parallel
 ### Getting the dependencies:
 
 **macos or linux with nix package manager**
-- run `nix develop` or directly run or build with `nix run` or `nix build` 
+- run `nix develop` or directly run with `nix run .#game` or `nix run .#algorithm` 
 
 **ubuntu**
 ```
