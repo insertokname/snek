@@ -5,6 +5,7 @@
 
 #include <algorithm>
 #include <cstddef>
+#include <memory>
 #include <string_view>
 
 #include "SDL_rect.h"
@@ -14,6 +15,7 @@
 #include "cell.hpp"
 #include "colors.hpp"
 #include "config.hpp"
+#include "game_context.hpp"
 #include "rect_tools.hpp"
 #include "text.hpp"
 #include "video_context.hpp"
@@ -27,7 +29,8 @@ namespace snek::draw {
                    const Board &board,
                    std::size_t cell_y_pos,
                    std::size_t cell_x_pos) {
-        // TODO: move this setup out of the draw_cell function to improve performance
+        // TODO: move this setup out of the draw_cell function to improve
+        // performance
         SDL_Rect screen_rect;
         rect_tools::get_screen_rect(video_context.window, screen_rect);
 
@@ -109,7 +112,8 @@ namespace snek::draw {
         }
     }
 
-    void draw_game_over_screen(VideoContext &video_context) {
+    void draw_game_over_screen(const VideoContext &video_context,
+                               std::shared_ptr<GameContext> game_context) {
         SDL_Rect screen_rect;
         rect_tools::get_screen_rect(video_context.window, screen_rect);
 
@@ -136,8 +140,12 @@ namespace snek::draw {
         set_draw_color(video_context.renderer, colors::BLACK);
         SDL_RenderFillRect(video_context.renderer, &game_over_background_rect);
 
-        TTF_Font *upheavtt = TTF_OpenFont("assets/upheavtt.ttf",
-                                          gui_config::GAME_OVER_FONT_SIZE);
+        TTF_Font *upheavtt =
+            TTF_OpenFont((game_context->get_exe_path().parent_path() /
+                          "assets" / "upheavtt.ttf")
+                             .string()
+                             .c_str(),
+                         gui_config::GAME_OVER_FONT_SIZE);
 
         text::TextStyleParams style = {
             .color = colors::BORDER_WHITE,

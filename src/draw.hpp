@@ -3,9 +3,11 @@
 #include <SDL_rect.h>
 
 #include <cstddef>
+#include <memory>
 
 #include "board.hpp"
 #include "colors.hpp"
+#include "game_context.hpp"
 #include "video_context.hpp"
 
 namespace snek::draw {
@@ -13,8 +15,8 @@ namespace snek::draw {
                    const Board &board,
                    std::size_t cell_y_pos,
                    std::size_t cell_x_pos);
-    void draw_board(const snek::VideoContext &video_context,
-                    const snek::Board &board);
-    void set_draw_color(SDL_Renderer *renderer, snek::colors::Color color);
-    void draw_game_over_screen(snek::VideoContext &video_context);
+    void draw_board(const VideoContext &video_context, const Board &board);
+    void set_draw_color(SDL_Renderer *renderer, colors::Color color);
+    void draw_game_over_screen(const VideoContext &video_context,
+                               std::shared_ptr<GameContext> game_context);
 }
