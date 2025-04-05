@@ -1,5 +1,6 @@
 #pragma once
 
+#include <memory>
 #include <utility>
 
 #include "board.hpp"
@@ -8,8 +9,6 @@
 #include "video_context.hpp"
 
 #ifdef SNEK_ALGORITHM
-#include <memory>
-
 #include "solver.hpp"
 #endif
 
