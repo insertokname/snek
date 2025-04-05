@@ -10,8 +10,8 @@ namespace snek {
         static App* app_instance = this;
 
         static auto main_loop_callback = []() {
-            if (app_instance->m_game_loop->get_cur_game_state() ==
-                GameState::Quitting) {
+            if (app_instance->m_game_context->get_cur_game_state() ==
+                GameState::Quit) {
                 emscripten_cancel_main_loop();
                 return;
             }
@@ -22,7 +22,7 @@ namespace snek {
 #else
     void App::run() {
         while (this->m_game_context->get_cur_game_state() !=
-               GameState::Quitting) {
+               GameState::Quit) {
             this->m_game_loop.game_tick();
         }
     }

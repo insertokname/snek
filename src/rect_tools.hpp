@@ -66,7 +66,7 @@ namespace snek::rect_tools {
         double relative_width;
         double relative_height;
     };
-    class RelativeRectStyle : RectStyle {
+    class RelativeRectStyle : public RectStyle {
     public:
         explicit RelativeRectStyle(const RelativeRectParams &params)
             : m_relative_height(params.relative_height),

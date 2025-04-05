@@ -7,6 +7,7 @@
 #include <cstddef>
 #include <memory>
 #include <string_view>
+#include <vector>
 
 #include "SDL_rect.h"
 #include "SDL_render.h"
@@ -113,15 +114,11 @@ namespace snek::draw {
         }
     }
 
-    void draw_game_over_screen(
-        const VideoContext &video_context,
-        const std::shared_ptr<GameContext> &game_context) {
-        SDL_Rect screen_rect;
-        rect_tools::get_screen_rect(video_context.window, screen_rect);
-
-        SDL_Rect game_over_background_rect;
+    void draw_popup_screen_background(SDL_Rect &popup_background_screen,
+                                      const SDL_Rect &screen_rect,
+                                      const VideoContext &video_context) {
         rect_tools::apply_rect_style(
-            game_over_background_rect,
+            popup_background_screen,
             screen_rect,
             rect_tools::SymmetricRelativeRectStyle({
                 .pos_percent = gui_config::POPUP_SCREEN_XY_POS,
@@ -130,7 +127,7 @@ namespace snek::draw {
 
         SDL_Rect game_over_border_background_rect;
         rect_tools::apply_rect_style(game_over_border_background_rect,
-                                     game_over_background_rect,
+                                     popup_background_screen,
                                      rect_tools::BorderRectStyle({
                                          .border_thickness = 4,
                                      }));
@@ -140,117 +137,196 @@ namespace snek::draw {
                            &game_over_border_background_rect);
 
         set_draw_color(video_context.renderer, colors::BLACK);
-        SDL_RenderFillRect(video_context.renderer, &game_over_background_rect);
+        SDL_RenderFillRect(video_context.renderer, &popup_background_screen);
+    }
 
-        TTF_Font *upheavtt =
-            TTF_OpenFont((game_context->get_exe_path().parent_path() /
-                          "assets" / "upheavtt.ttf")
-                             .string()
-                             .c_str(),
-                         gui_config::POPUP_SCREEN_FONT_SIZE);
+    void draw_text_to_popup_screen(
+        text::Text title_text,
+        const std::vector<text::Text> &sub_titles_text,
+        const VideoContext &video_context) {
+        SDL_Rect screen_rect;
+        rect_tools::get_screen_rect(video_context.window, screen_rect);
 
-        text::TextStyleParams style = {
-            .color = colors::BORDER_WHITE,
-            .font = upheavtt,
-        };
+        SDL_Rect popup_screen_rect;
+        draw_popup_screen_background(
+            popup_screen_rect, screen_rect, video_context);
 
+        SDL_Rect top_screen_rect;
+        rect_tools::apply_rect_style(
+            top_screen_rect,
+            popup_screen_rect,
+            rect_tools::RelativeRectStyle({
+                .relative_x_pos = 0.0,
+                .relative_y_pos = gui_config::POPUP_SCREEN_TOP_SIDE_Y_POS,
+                .relative_width = 1.0,
+                .relative_height = gui_config::POPUP_SCREEN_TOP_SIDE_HEIGHT,
+            }));
+
+        SDL_Rect bottom_screen_rect;
+        rect_tools::apply_rect_style(
+            bottom_screen_rect,
+            popup_screen_rect,
+            rect_tools::RelativeRectStyle({
+                .relative_x_pos = 0.0,
+                .relative_y_pos = gui_config::POPUP_SCREEN_BOTTOM_SIDE_Y_POS,
+                .relative_width = 1.0,
+                .relative_height = gui_config::POPUP_SCREEN_BOTTOM_SIDE_HEIGHT,
+            }));
+
+        SDL_Rect title_text_rect_container;
         text::draw_text_in_rect(
-            text::Text("game over!", style),
-            game_over_background_rect,
+            title_text,
+            top_screen_rect,
             rect_tools::RelativePositionedRectStyle({
                 .relative_x_pos = gui_config::POPUP_SCREEN_TEXT_X_POS,
                 .relative_y_pos = gui_config::POPUP_SCREEN_TITLE_Y_POS,
             }),
             video_context.renderer);
 
-        text::draw_text_in_rect(
-            text::Text("press 'r'", style),
-            game_over_background_rect,
-            rect_tools::RelativePositionedRectStyle({
-                .relative_x_pos = gui_config::POPUP_SCREEN_TEXT_X_POS,
-                .relative_y_pos = gui_config::POPUP_SCREEN_SUBHEADING1_Y_POS,
-            }),
-            video_context.renderer);
+        int rect_height =
+            static_cast<int>(screen_rect.h / sub_titles_text.size());
+        double sub_title_relative_height =
+            (double)(screen_rect.h) /
+            (double)(sub_titles_text.size() * screen_rect.h);
 
-        text::draw_text_in_rect(
-            text::Text("to try again!", style),
-            game_over_background_rect,
-            rect_tools::RelativePositionedRectStyle({
-                .relative_x_pos = gui_config::POPUP_SCREEN_TEXT_X_POS,
-                .relative_y_pos = gui_config::POPUP_SCREEN_SUBHEADING2_Y_POS,
-            }),
-            video_context.renderer);
+        int cur_sub_title = 0;
+        for (text::Text sub_title_text : sub_titles_text) {
+            SDL_Rect text_rect_container;
+            rect_tools::apply_rect_style(
+                text_rect_container,
+                bottom_screen_rect,
+                rect_tools::RelativeRectStyle({
+                    .relative_x_pos = gui_config::POPUP_SCREEN_TEXT_X_POS,
+                    .relative_y_pos = sub_title_relative_height /
+                                      (1.0 - sub_title_relative_height) *
+                                      cur_sub_title,
+                    .relative_width = 1.0,
+                    .relative_height = sub_title_relative_height,
+                }));
 
-        TTF_CloseFont(upheavtt);
+            SDL_Rect text_rect;
+            text::draw_text_in_rect(
+                sub_title_text,
+                text_rect_container,
+                rect_tools::RelativePositionedRectStyle({
+                    .relative_x_pos = gui_config::POPUP_SCREEN_TEXT_X_POS,
+                    .relative_y_pos = gui_config::POPUP_SCREEN_SUB_TITLE_Y_POS,
+                }),
+                video_context.renderer);
+
+            text_rect.y = rect_height * cur_sub_title;
+
+            cur_sub_title++;
+        }
+    }
+
+    struct DrawStringExtraOptions {
+        colors::Color title_color = colors::BORDER_WHITE;
+        int title_size = gui_config::POPUP_SCREEN_TITLE_FONT_SIZE;
+        colors::Color sub_title_color = colors::BORDER_WHITE;
+        int sub_title_size = gui_config::POPUP_SCREEN_SUB_TITLE_FONT_SIZE;
+    };
+
+    void draw_string_to_popup_screen(
+        const std::string_view title,
+        const std::vector<std::string_view> &sub_titles,
+        const VideoContext &video_context,
+        const std::shared_ptr<GameContext> &game_context,
+        const DrawStringExtraOptions &extra_options =
+            DrawStringExtraOptions()) {
+        TTF_Font *title_font =
+            TTF_OpenFont((game_context->get_exe_path().parent_path() /
+                          "assets" / "upheavtt.ttf")
+                             .string()
+                             .c_str(),
+                         text::get_relative_font_size(extra_options.title_size,
+                                                      video_context.window));
+
+        TTF_Font *sub_title_font = TTF_OpenFont(
+            (game_context->get_exe_path().parent_path() / "assets" /
+             "upheavtt.ttf")
+                .string()
+                .c_str(),
+            text::get_relative_font_size(extra_options.sub_title_size,
+                                         video_context.window));
+
+        text::TextStyleParams title_text_style = {
+            .color = extra_options.title_color,
+            .font = title_font,
+        };
+
+        text::TextStyleParams sub_title_text_style = {
+            .color = extra_options.sub_title_color,
+            .font = sub_title_font,
+        };
+
+        std::vector<text::Text> text_sub_titles;
+        text_sub_titles.reserve(sub_titles.size());
+
+        for (const std::string_view sub_title : sub_titles) {
+            text_sub_titles.emplace_back(sub_title, sub_title_text_style);
+        }
+
+        draw_text_to_popup_screen(text::Text(title, title_text_style),
+                                  text_sub_titles,
+                                  video_context);
+
+        TTF_CloseFont(title_font);
+        TTF_CloseFont(sub_title_font);
     }
 
     void draw_win_screen(const VideoContext &video_context,
                          const std::shared_ptr<GameContext> &game_context) {
-        SDL_Rect screen_rect;
-        rect_tools::get_screen_rect(video_context.window, screen_rect);
+        draw_string_to_popup_screen("You won!",
+                                    {
+                                        "you can restart",
+                                        "by pressing \"r\"",
+                                    },
+                                    video_context,
+                                    game_context);
+    }
 
-        SDL_Rect game_over_background_rect;
-        rect_tools::apply_rect_style(
-            game_over_background_rect,
-            screen_rect,
-            rect_tools::SymmetricRelativeRectStyle({
-                .pos_percent = gui_config::POPUP_SCREEN_XY_POS,
-                .size_percent = gui_config::POPUP_SCREEN_XY_POS,
-            }));
+    void draw_lose_screen(const VideoContext &video_context,
+                          const std::shared_ptr<GameContext> &game_context) {
+        draw_string_to_popup_screen("game over!",
+                                    {
+                                        "press \"r\"",
+                                        "to try again",
+                                    },
+                                    video_context,
+                                    game_context);
+    }
+    void draw_error_screen(std::string_view error_message,
+                           const VideoContext &video_context,
+                           const std::shared_ptr<GameContext> &game_context) {
+        std::string string_error_message(error_message);
 
-        SDL_Rect game_over_border_background_rect;
-        rect_tools::apply_rect_style(game_over_border_background_rect,
-                                     game_over_background_rect,
-                                     rect_tools::BorderRectStyle({
-                                         .border_thickness = 4,
-                                     }));
+        std::replace(string_error_message.begin(),
+                     string_error_message.end(),
+                     '\n',
+                     '\0');
 
-        set_draw_color(video_context.renderer, colors::BORDER_WHITE);
-        SDL_RenderFillRect(video_context.renderer,
-                           &game_over_border_background_rect);
+        std::vector<std::string_view> error_messages;
+        error_messages.reserve(std::ranges::count(string_error_message, '\0') -
+                               1);
+        for (std::size_t i = 0; i < string_error_message.size();) {
+            const char *start = &string_error_message[i];
+            std::size_t len = std::strlen(start);
+            if (len > 0) {
+                error_messages.emplace_back(start, len);
+            }
+            i += len + 1;
+        }
 
-        set_draw_color(video_context.renderer, colors::BLACK);
-        SDL_RenderFillRect(video_context.renderer, &game_over_background_rect);
-
-        TTF_Font *upheavtt =
-            TTF_OpenFont((game_context->get_exe_path().parent_path() /
-                          "assets" / "upheavtt.ttf")
-                             .string()
-                             .c_str(),
-                         gui_config::POPUP_SCREEN_FONT_SIZE);
-
-        text::TextStyleParams style = {
-            .color = colors::BORDER_WHITE,
-            .font = upheavtt,
-        };
-
-        text::draw_text_in_rect(
-            text::Text("You won!", style),
-            game_over_background_rect,
-            rect_tools::RelativePositionedRectStyle({
-                .relative_x_pos = gui_config::POPUP_SCREEN_TEXT_X_POS,
-                .relative_y_pos = gui_config::POPUP_SCREEN_TITLE_Y_POS,
-            }),
-            video_context.renderer);
-
-        text::draw_text_in_rect(
-            text::Text("press 'r'", style),
-            game_over_background_rect,
-            rect_tools::RelativePositionedRectStyle({
-                .relative_x_pos = gui_config::POPUP_SCREEN_TEXT_X_POS,
-                .relative_y_pos = gui_config::POPUP_SCREEN_SUBHEADING1_Y_POS,
-            }),
-            video_context.renderer);
-
-        text::draw_text_in_rect(
-            text::Text("to restart game!", style),
-            game_over_background_rect,
-            rect_tools::RelativePositionedRectStyle({
-                .relative_x_pos = gui_config::POPUP_SCREEN_TEXT_X_POS,
-                .relative_y_pos = gui_config::POPUP_SCREEN_SUBHEADING2_Y_POS,
-            }),
-            video_context.renderer);
-
-        TTF_CloseFont(upheavtt);
+        draw_string_to_popup_screen(
+            "Error:",
+            error_messages,
+            video_context,
+            game_context,
+            {
+                .title_color = colors::WARNING_RED,
+                .sub_title_size =
+                    gui_config::POPUP_SCREEN_ERROR_SUB_TITLE_FONT_SIZE,
+            });
     }
 }

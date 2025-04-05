@@ -31,11 +31,18 @@ namespace snek {
     namespace gui_config {
         constexpr double BOARD_XY_POS = 0.5;
 
-        constexpr double POPUP_SCREEN_TEXT_X_POS = 0.5;
-        constexpr double POPUP_SCREEN_TITLE_Y_POS = 0.3;
-        constexpr double POPUP_SCREEN_SUBHEADING1_Y_POS = 0.6;
-        constexpr double POPUP_SCREEN_SUBHEADING2_Y_POS = 0.7;
-        constexpr int POPUP_SCREEN_FONT_SIZE = 50;
+        constexpr double POPUP_SCREEN_TOP_SIDE_HEIGHT = 0.5;
+        constexpr double POPUP_SCREEN_TOP_SIDE_Y_POS = 0.1;
+        constexpr double POPUP_SCREEN_BOTTOM_SIDE_HEIGHT = 0.4;
+        constexpr double POPUP_SCREEN_BOTTOM_SIDE_Y_POS = 0.8;
+
         constexpr double POPUP_SCREEN_XY_POS = 0.5;
+        constexpr double POPUP_SCREEN_TITLE_Y_POS = 0.5;
+        constexpr double POPUP_SCREEN_SUB_TITLE_Y_POS = 0.5;
+        constexpr double POPUP_SCREEN_TEXT_X_POS = 0.5;
+
+        constexpr int POPUP_SCREEN_TITLE_FONT_SIZE = 75;
+        constexpr int POPUP_SCREEN_SUB_TITLE_FONT_SIZE = 35;
+        constexpr int POPUP_SCREEN_ERROR_SUB_TITLE_FONT_SIZE = 25;
     }
 }

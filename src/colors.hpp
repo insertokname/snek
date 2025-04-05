@@ -31,5 +31,6 @@ namespace snek::colors {
     constexpr Color BODY_GREEN = rgba(152, 151, 26, 255);
     constexpr Color HEAD_GREEN = rgba(184, 187, 38, 255);
     constexpr Color FOOD_RED = rgba(251, 73, 52, 255);
+    constexpr Color WARNING_RED = rgba(255, 69, 69, 255);
     constexpr Color BORDER_WHITE = rgba(255, 255, 255, 255);
 }

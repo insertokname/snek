@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SDL_surface.h>
+#include <SDL_video.h>
 
 #include <string_view>
 
@@ -39,4 +40,7 @@ namespace snek::text {
                            const SDL_Rect &parent_rect,
                            const rect_tools::RectStyle &style,
                            SDL_Renderer *renderer);
+
+    int get_relative_font_size(const int initial_font_size, SDL_Window *window);
+
 }

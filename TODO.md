@@ -19,4 +19,4 @@ separate logic for game loop
 break input into multiple functions for example: do directional input, do swipe input, do quit input
 make all casts static casts
 change "sdl.h" to <sdl.h>
-make all the pointers smart pointers
+move std::shared to unique

@@ -83,7 +83,7 @@ namespace snek {
               (unsigned int)new_head.first < this->m_board_size.height &&
               0 <= new_head.second &&
               (unsigned int)new_head.second < this->m_board_size.width)) {
-            game_context->set_cur_game_state(GameState::SnakeDead);
+            game_context->set_cur_game_state(GameState::Lost);
             return;
         }
 
@@ -99,7 +99,7 @@ namespace snek {
         // if the snake colides with the Body == dead
         else if (this->m_mat[new_head.first][new_head.second] != Cell::Empty &&
                  this->m_mat[new_head.first][new_head.second] != Cell::Tail) {
-            game_context->set_cur_game_state(GameState::SnakeDead);
+            game_context->set_cur_game_state(GameState::Lost);
             return;
         }
 

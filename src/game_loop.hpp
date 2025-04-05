@@ -19,14 +19,14 @@ namespace snek {
         void do_input(std::pair<int, int>& direction);
         GameLoop(const Dimensions& dimensions,
                  const VideoContext& video_context,
-                 std::shared_ptr<GameContext> game_context)
+                 const std::shared_ptr<GameContext>& game_context)
             : m_board(std::make_shared<Board>(Board(dimensions))),
 #ifdef SNEK_ALGORITHM
-              m_solver(this->m_board),
+              m_solver(this->m_board, game_context),
 #endif
               m_video_context(video_context),
               m_dimensions(dimensions),
-              m_game_context(std::move(game_context)) {
+              m_game_context(game_context) {
         }
 
     private:

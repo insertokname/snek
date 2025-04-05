@@ -2,19 +2,16 @@
 
 #include <array>
 #include <cstddef>
-#include <iostream>
 #include <memory>
+#include <optional>
 #include <utility>
 #include <vector>
 
-#include "board.hpp"
 #include "config.hpp"
+#include "game_context.hpp"
 
 namespace snek {
-    Solver::Solver(std::shared_ptr<Board> board)
-        : m_path(board->get_size()), m_board(std::move(board)) {}
-
-    std::pair<int, int> Solver::get_next_move() {
+    std::optional<std::pair<int, int>> Solver::get_next_move() {
         static constexpr std::array<std::pair<int, int>, 4> DIRECTIONS = {
             std::pair{1, 0},
             std::pair{0, 1},
@@ -61,9 +58,12 @@ namespace snek {
         }
 
         if (min_dist == SIZE_MAX) {
-            std::cout << "Failed to reach the next cell in the path!\n"
-                      << "Exiting\n";
-            exit(1);
+            std::string error_message =
+                "Failed to reach the next cell in the path!\n"
+                "Please restart!\n";
+            this->m_game_context->set_error_message(std::move(error_message));
+            this->m_game_context->set_cur_game_state(GameState::Error);
+            return std::nullopt;
         }
 
         return min_pos;

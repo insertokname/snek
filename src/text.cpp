@@ -3,11 +3,13 @@
 #include <SDL_rect.h>
 #include <SDL_render.h>
 #include <SDL_surface.h>
+#include <SDL_video.h>
 
 #include <string_view>
 
 #include "SDL_ttf.h"
 #include "colors.hpp"
+#include "config.hpp"
 #include "rect_tools.hpp"
 
 namespace snek::text {
@@ -46,5 +48,20 @@ namespace snek::text {
 
         SDL_RenderCopy(
             renderer, text_create_result.texture, nullptr, &out_text_rect);
+    }
+
+    int get_relative_font_size(const int initial_font_size,
+                               SDL_Window *window) {
+        int height = game_config::INITIAL_SCREEN_SIZE.height,
+            width = game_config::INITIAL_SCREEN_SIZE.width;
+        SDL_GetWindowSize(window, &width, &height);
+
+        double width_ratio =
+            static_cast<double>(width) / game_config::INITIAL_SCREEN_SIZE.width;
+        double height_ratio = static_cast<double>(height) /
+                              game_config::INITIAL_SCREEN_SIZE.height;
+
+        return static_cast<int>(std::min(width_ratio, height_ratio) *
+                                initial_font_size);
     }
 }

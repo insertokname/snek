@@ -9,6 +9,7 @@
 #include "config.hpp"
 #include "draw.hpp"
 #include "game_context.hpp"
+#include "solver.hpp"
 
 namespace snek {
     void GameLoop::game_tick() {
@@ -24,18 +25,26 @@ namespace snek {
         }
 
         switch (this->m_game_context->get_cur_game_state()) {
-            case GameState::Quitting:
+            case GameState::Quit:
+                break;
+            case GameState::Error:
+                draw::draw_board(this->m_video_context, this->m_board);
+                draw::draw_error_screen(
+                    this->m_game_context->get_error_message(),
+                    this->m_video_context,
+                    this->m_game_context);
+                this->m_present_scene();
+                break;
+            case GameState::Lost:
+                draw::draw_board(this->m_video_context, this->m_board);
+                draw::draw_lose_screen(this->m_video_context,
+                                       this->m_game_context);
+                this->m_present_scene();
                 break;
             case GameState::Won:
                 draw::draw_board(this->m_video_context, this->m_board);
                 draw::draw_win_screen(this->m_video_context,
                                       this->m_game_context);
-                this->m_present_scene();
-                break;
-            case GameState::SnakeDead:
-                draw::draw_board(this->m_video_context, this->m_board);
-                draw::draw_game_over_screen(this->m_video_context,
-                                            this->m_game_context);
                 this->m_present_scene();
                 break;
             case GameState::Running:
@@ -47,8 +56,12 @@ namespace snek {
                     start = std::chrono::steady_clock::now();
 #ifdef SNEK_ALGORITHM
                     auto next_move = m_solver.get_next_move();
-                    this->m_board->set_direction(next_move);
-                    m_board->move_snake(this->m_game_context);
+                    if (next_move) {
+                        this->m_board->set_direction(next_move.value());
+                        m_board->move_snake(this->m_game_context);
+                    } else {
+                        break;
+                    }
 #else
                     this->m_board->move_snake(this->m_game_context);
 #endif
@@ -82,19 +95,23 @@ namespace snek {
         while (SDL_PollEvent(&event) != 0) {
             switch (event.type) {
                 case SDL_QUIT:
-                    this->m_game_context->set_cur_game_state(
-                        GameState::Quitting);
+                    this->m_game_context->set_cur_game_state(GameState::Quit);
                     break;
 
                 case SDL_KEYDOWN: {
                     if ((this->m_game_context->get_cur_game_state() ==
-                             GameState::SnakeDead ||
+                             GameState::Lost ||
                          this->m_game_context->get_cur_game_state() ==
-                             GameState::Won) &&
+                             GameState::Won ||
+                         this->m_game_context->get_cur_game_state() ==
+                             GameState::Error) &&
                         event.key.keysym.sym == SDLK_r) {
-                        (*this->m_board) = Board(this->m_dimensions);
                         this->m_game_context->set_cur_game_state(
                             GameState::Running);
+                        *this->m_board = Board(this->m_dimensions);
+#ifdef SNEK_ALGORITHM
+                        this->m_solver = Solver(this->m_board, m_game_context);
+#endif
                         return;
                     }
                     if (event.key.keysym.sym == SDLK_UP) {

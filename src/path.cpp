@@ -1,11 +1,14 @@
 #include "path.hpp"
 
-#include <iostream>
+#include <memory>
 
 #include "dimensions.hpp"
+#include "game_context.hpp"
 
 namespace snek {
-    Path::Path(const Dimensions& board_size) : m_dimensions(board_size) {
+    Path::Path(const Dimensions& board_size,
+               const std::shared_ptr<GameContext>& game_context)
+        : m_dimensions(board_size) {
         m_path = std::vector<std::vector<std::size_t>>(
             board_size.height, std::vector<std::size_t>(board_size.width));
 
@@ -14,10 +17,14 @@ namespace snek {
         } else if (board_size.width % 2 == 0) {
             this->m_generate_vertical_path();
         } else {
-            std::cout << "Both sides of the board are odd!\n"
-                      << "Can't generate hamiltonian cycle!\n"
-                      << "Exiting!\n";
-            exit(1);
+            std::string error_message =
+                "Both sides of the board are odd!\n"
+                "can't generate hamiltonian cycle!\n"
+                "change the size of the board so that\n"
+                "it contains at least one even side!\n";
+            game_context->set_cur_game_state(GameState::Error);
+            game_context->set_error_message(std::move(error_message));
+            return;
         }
     }
 
