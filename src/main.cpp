@@ -12,8 +12,8 @@ int main([[maybe_unused]] int argc, char *argv[]) {
 
     snek::VideoContext video_context =
         snek::VideoContext(snek::game_config::INITIAL_SCREEN_SIZE);
-    auto game_context = std::make_shared<snek::GameContext>(snek::GameContext(
-        std::filesystem::path(std::filesystem::canonical(args[0]))));
+    auto game_context = std::make_shared<snek::GameContext>(
+        std::filesystem::path(std::filesystem::canonical(args[0])));
     snek::App app(snek::game_config::BOARD_SIZE, video_context, game_context);
     app.run();
     return 0;

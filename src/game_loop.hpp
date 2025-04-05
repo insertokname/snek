@@ -20,9 +20,9 @@ namespace snek {
         GameLoop(const Dimensions& dimensions,
                  const VideoContext& video_context,
                  std::shared_ptr<GameContext> game_context)
-            : m_board(dimensions),
+            : m_board(std::make_shared<Board>(Board(dimensions))),
 #ifdef SNEK_ALGORITHM
-              m_solver(std::unique_ptr<Board>(&this->m_board)),
+              m_solver(this->m_board),
 #endif
               m_video_context(video_context),
               m_dimensions(dimensions),
@@ -36,7 +36,7 @@ namespace snek {
         Dimensions m_dimensions;
         VideoContext m_video_context;
         std::shared_ptr<GameContext> m_game_context;
-        Board m_board;
+        std::shared_ptr<Board> m_board;
 #ifdef SNEK_ALGORITHM
         Solver m_solver;
 #endif

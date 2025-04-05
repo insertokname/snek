@@ -31,11 +31,11 @@ namespace snek {
     namespace gui_config {
         constexpr double BOARD_XY_POS = 0.5;
 
-        constexpr double GAME_OVER_TEXT_X_POS = 0.5;
-        constexpr double GAME_OVER_TITLE_Y_POS = 0.3;
-        constexpr double GAME_OVER_SUBHEADING1_Y_POS = 0.6;
-        constexpr double GAME_OVER_SUBHEADING2_Y_POS = 0.7;
-        constexpr int GAME_OVER_FONT_SIZE = 50;
-        constexpr double GAME_OVER_XY_POS = 0.5;
+        constexpr double POPUP_SCREEN_TEXT_X_POS = 0.5;
+        constexpr double POPUP_SCREEN_TITLE_Y_POS = 0.3;
+        constexpr double POPUP_SCREEN_SUBHEADING1_Y_POS = 0.6;
+        constexpr double POPUP_SCREEN_SUBHEADING2_Y_POS = 0.7;
+        constexpr int POPUP_SCREEN_FONT_SIZE = 50;
+        constexpr double POPUP_SCREEN_XY_POS = 0.5;
     }
 }

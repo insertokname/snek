@@ -8,6 +8,7 @@
 #include "board.hpp"
 #include "config.hpp"
 #include "draw.hpp"
+#include "game_context.hpp"
 
 namespace snek {
     void GameLoop::game_tick() {
@@ -18,12 +19,18 @@ namespace snek {
 
         if (!m_is_buffering &&
             (raw_direction.first != 0 || raw_direction.second != 0)) {
-            this->m_board.set_direction(raw_direction);
+            this->m_board->set_direction(raw_direction);
             m_is_buffering = true;
         }
 
         switch (this->m_game_context->get_cur_game_state()) {
             case GameState::Quitting:
+                break;
+            case GameState::Won:
+                draw::draw_board(this->m_video_context, this->m_board);
+                draw::draw_win_screen(this->m_video_context,
+                                      this->m_game_context);
+                this->m_present_scene();
                 break;
             case GameState::SnakeDead:
                 draw::draw_board(this->m_video_context, this->m_board);
@@ -40,17 +47,10 @@ namespace snek {
                     start = std::chrono::steady_clock::now();
 #ifdef SNEK_ALGORITHM
                     auto next_move = m_solver.get_next_move();
-                    this->m_board.set_direction(next_move);
-                    m_board.move_snake();
+                    this->m_board->set_direction(next_move);
+                    m_board->move_snake(this->m_game_context);
 #else
-                    switch (this->m_board.move_snake()) {
-                        case MoveResultSnakeStatus::Alive:
-                            break;
-                        case MoveResultSnakeStatus::Dead:
-                            this->m_game_context->set_cur_game_state(
-                                GameState::SnakeDead);
-                            break;
-                    }
+                    this->m_board->move_snake(this->m_game_context);
 #endif
                 }
                 this->m_is_buffering = false;
@@ -87,10 +87,12 @@ namespace snek {
                     break;
 
                 case SDL_KEYDOWN: {
-                    if (this->m_game_context->get_cur_game_state() ==
-                            GameState::SnakeDead &&
+                    if ((this->m_game_context->get_cur_game_state() ==
+                             GameState::SnakeDead ||
+                         this->m_game_context->get_cur_game_state() ==
+                             GameState::Won) &&
                         event.key.keysym.sym == SDLK_r) {
-                        this->m_board = Board(this->m_dimensions);
+                        (*this->m_board) = Board(this->m_dimensions);
                         this->m_game_context->set_cur_game_state(
                             GameState::Running);
                         return;

@@ -8,6 +8,7 @@ namespace snek {
         Running,
         SnakeDead,
         Quitting,
+        Won,
     };
 
     class GameContext {

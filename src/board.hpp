@@ -1,23 +1,23 @@
 #pragma once
 
-#include <cstdint>
 #include <cstdlib>
 #include <ctime>
 #include <deque>
+#include <memory>
+#include <optional>
 #include <utility>
 #include <vector>
 
 #include "cell.hpp"
 #include "dimensions.hpp"
+#include "game_context.hpp"
 
 namespace snek {
-    enum class MoveResultSnakeStatus : std::uint8_t { Dead, Alive };
-
     class Board {
     public:
         explicit Board(const Dimensions& board_size);
 
-        MoveResultSnakeStatus move_snake();
+        void move_snake(const std::shared_ptr<GameContext>& game_context);
 
         [[nodiscard]] Dimensions get_size() const;
         [[nodiscard]] const std::pair<std::size_t, std::size_t>&
@@ -34,6 +34,7 @@ namespace snek {
         std::deque<std::pair<std::size_t, std::size_t>> m_snake;
         std::vector<std::vector<snek::Cell>> m_mat;
         std::pair<std::size_t, std::size_t> m_food_location;
-        void m_spawn_food();
+        void m_spawn_food(
+            std::optional<std::shared_ptr<GameContext>> game_context);
     };
 }

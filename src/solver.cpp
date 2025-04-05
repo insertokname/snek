@@ -11,7 +11,7 @@
 #include "config.hpp"
 
 namespace snek {
-    Solver::Solver(std::unique_ptr<Board> board)
+    Solver::Solver(std::shared_ptr<Board> board)
         : m_path(board->get_size()), m_board(std::move(board)) {}
 
     std::pair<int, int> Solver::get_next_move() {
@@ -41,7 +41,8 @@ namespace snek {
             if (((0 <= ynew && ynew < this->m_board->get_size().height) &&
                  (0 <= xnew && xnew < this->m_board->get_size().width)) &&
                 (this->m_board->mat()[ynew][xnew] == Cell::Empty ||
-                 this->m_board->mat()[ynew][xnew] == Cell::Food)) {
+                 this->m_board->mat()[ynew][xnew] == Cell::Food ||
+                 this->m_board->mat()[ynew][xnew] == Cell::Tail)) {
                 std::size_t dist_food =
                     m_get_dist_to_food(std::pair(ynew, xnew));
 

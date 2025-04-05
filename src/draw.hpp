@@ -12,11 +12,17 @@
 
 namespace snek::draw {
     void draw_cell(const VideoContext &video_context,
-                   const Board &board,
+                   const std::shared_ptr<Board> &board,
                    std::size_t cell_y_pos,
                    std::size_t cell_x_pos);
-    void draw_board(const VideoContext &video_context, const Board &board);
+    void draw_board(const VideoContext &video_context,
+                    const std::shared_ptr<Board> &board);
     void set_draw_color(SDL_Renderer *renderer, colors::Color color);
-    void draw_game_over_screen(const VideoContext &video_context,
-                               std::shared_ptr<GameContext> game_context);
+    void draw_game_over_screen(
+        const VideoContext &video_context,
+        const std::shared_ptr<GameContext> &game_context);
+
+    void draw_win_screen(const VideoContext &video_context,
+                              const std::shared_ptr<GameContext> &game_context);
+
 }

@@ -2,15 +2,19 @@
 
 #include <cstddef>
 #include <deque>
-#include <iostream>
+#include <memory>
+#include <optional>
 #include <utility>
 #include <vector>
 
 #include "cell.hpp"
 #include "dimensions.hpp"
+#include "game_context.hpp"
+#include "rng.hpp"
 
 namespace snek {
-    void Board::m_spawn_food() {
+    void Board::m_spawn_food(
+        std::optional<std::shared_ptr<GameContext>> game_context) {
         std::vector<std::pair<std::size_t, std::size_t>> valid_spaces;
         for (std::size_t i = 0; i < this->m_board_size.height; i++) {
             for (std::size_t j = 0; j < this->m_board_size.width; j++) {
@@ -21,14 +25,14 @@ namespace snek {
         }
 
         if (valid_spaces.empty()) {
-            std::cout << "No more spaces left to spawn Food!\nYou "
-                         "probably won!\n";
-            std::exit(0);
+            if (game_context) {
+                game_context.value()->set_cur_game_state(GameState::Won);
+            }
+            return;
         }
 
-        std::srand(static_cast<unsigned int>(std::time(nullptr)));
-
-        std::size_t index = std::rand() % valid_spaces.size();
+        std::size_t index = generate_random_number(
+            0, static_cast<int>(valid_spaces.size()) - 1);
         this->m_food_location = valid_spaces[index];
         this->m_mat[valid_spaces[index].first][valid_spaces[index].second] =
             Cell::Food;
@@ -45,7 +49,7 @@ namespace snek {
         this->m_mat[0][(board_size.width / 2) - 1] = Cell::Tail;
         this->m_mat[0][board_size.width / 2] = Cell::Head;
 
-        this->m_spawn_food();
+        this->m_spawn_food(std::nullopt);
     }
     void Board::set_direction(std::pair<int, int> new_direction) {
         if (new_direction.first != 0 || new_direction.second != 0) {
@@ -53,9 +57,9 @@ namespace snek {
         }
     }
 
-    MoveResultSnakeStatus Board::move_snake() {
+    void Board::move_snake(const std::shared_ptr<GameContext> &game_context) {
         if (this->m_direction.first == 0 && this->m_direction.second == 0) {
-            return MoveResultSnakeStatus::Alive;
+            return;
         }
         std::pair<int, int> new_head = this->m_snake.front(),
                             head_copy = this->m_snake.front(),
@@ -79,21 +83,24 @@ namespace snek {
               (unsigned int)new_head.first < this->m_board_size.height &&
               0 <= new_head.second &&
               (unsigned int)new_head.second < this->m_board_size.width)) {
-            return MoveResultSnakeStatus::Dead;
+            game_context->set_cur_game_state(GameState::SnakeDead);
+            return;
         }
 
         // if the snake finds a fruit extend it
         if (this->m_mat[new_head.first][new_head.second] == Cell::Food) {
-            this->m_spawn_food();
+            this->m_spawn_food(game_context);
 
             this->m_snake.emplace_front(new_head);
             this->m_mat[head_copy.first][head_copy.second] = Cell::Body;
             this->m_mat[new_head.first][new_head.second] = Cell::Head;
-            return MoveResultSnakeStatus::Alive;
+            return;
         }
         // if the snake colides with the Body == dead
-        else if (this->m_mat[new_head.first][new_head.second] != Cell::Empty && this->m_mat[new_head.first][new_head.second] != Cell::Tail) {
-            return MoveResultSnakeStatus::Dead;
+        else if (this->m_mat[new_head.first][new_head.second] != Cell::Empty &&
+                 this->m_mat[new_head.first][new_head.second] != Cell::Tail) {
+            game_context->set_cur_game_state(GameState::SnakeDead);
+            return;
         }
 
         // delete old Tail, add new Head, update old Head to Body
@@ -106,7 +113,6 @@ namespace snek {
         this->m_mat[this->m_snake.back().first][this->m_snake.back().second] =
             Cell::Tail;
         this->m_snake.emplace_front(new_head);
-        return MoveResultSnakeStatus::Alive;
     }
 
     Dimensions Board::get_size() const {
