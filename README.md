@@ -1,6 +1,8 @@
 # snek
 snek is a snake algorithm made in sdl2 that automatically solves every board that has at least one even side (the number of cells on the side is even). This project uses **emscripten** and **github actions** to automatically deploy to github pages here: https://insertokname.github.io/snek/algorithm/snek.html and you can also play it in the browser here: https://insertokname.github.io/snek/game/snek.html 
 
+The game can also be played on mobile at the same urls by swiping your finger!
+
 **General structure**
 This project is made using cmake and uses `#defines` for conditional compilation. If `SNEK_ALGORITHM` is defined then the game will play itself automatically. If it isn't defined then the player can controll it. The project is setup so it can be build on any os and can also target wasm.
 
