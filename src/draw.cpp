@@ -311,7 +311,7 @@ namespace snek::draw {
                                1);
         for (std::size_t i = 0; i < string_error_message.size();) {
             const char *start = &string_error_message[i];
-            std::size_t len = std::strlen(start);
+            std::size_t len = strlen(start);
             if (len > 0) {
                 error_messages.emplace_back(start, len);
             }

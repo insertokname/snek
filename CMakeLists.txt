@@ -27,8 +27,31 @@ if(EMSCRIPTEN)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${EMSCRIPTEN_LINK_FLAGS}")
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} ${EMSCRIPTEN_LINK_FLAGS}")
 else()
-  find_package(SDL2 REQUIRED)
-  find_package(SDL2_ttf REQUIRED)
+  if(AUTO_DOWNLOAD_DEPS)
+    include(FetchContent)
+    FetchContent_Declare(
+      SDL2
+      GIT_REPOSITORY https://github.com/libsdl-org/SDL.git
+      GIT_TAG release-2.28.3
+    )
+
+    FetchContent_MakeAvailable(SDL2)
+
+    FetchContent_Declare(
+      SDL2_ttf
+      GIT_REPOSITORY https://github.com/libsdl-org/SDL_ttf.git
+      GIT_TAG release-2.24.0
+    )
+
+    set(SDL2TTF_VENDORED ON CACHE BOOL "Use bundled FreeType library")
+
+    FetchContent_MakeAvailable(SDL2_ttf)
+    set(SDL2_TTF_INCLUDE_DIR "${sdl2_ttf_SOURCE_DIR}/include")
+  else()
+    find_package(SDL2 REQUIRED)
+    find_package(SDL2_ttf REQUIRED)
+  endif()
+
 
   include_directories(${SDL2_INCLUDE_DIRS} ${SDL2_TTF_INCLUDE_DIR})
 endif()
