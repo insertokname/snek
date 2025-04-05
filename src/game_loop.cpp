@@ -1,8 +1,9 @@
 #include "game_loop.hpp"
 
-#include <chrono>
 #include <SDL_events.h>
 #include <SDL_timer.h>
+
+#include <chrono>
 
 #include "board.hpp"
 #include "config.hpp"
@@ -21,12 +22,12 @@ namespace snek {
             m_is_buffering = true;
         }
 
-        switch (this->m_cur_game_state) {
+        switch (this->m_game_context->get_cur_game_state()) {
             case GameState::Quitting:
                 break;
             case GameState::SnakeDead:
-                draw::draw_board(this->m_context, this->m_board);
-                draw::draw_game_over_screen(this->m_context);
+                draw::draw_board(this->m_video_context, this->m_board);
+                draw::draw_game_over_screen(this->m_video_context);
                 this->m_present_scene();
                 break;
             case GameState::Running:
@@ -45,31 +46,28 @@ namespace snek {
                         case MoveResultSnakeStatus::Alive:
                             break;
                         case MoveResultSnakeStatus::Dead:
-                            this->m_cur_game_state = GameState::SnakeDead;
+                            this->m_game_context->set_cur_game_state(
+                                GameState::SnakeDead);
                             break;
                     }
 #endif
                 }
                 this->m_is_buffering = false;
 
-                draw::draw_board(this->m_context, this->m_board);
+                draw::draw_board(this->m_video_context, this->m_board);
                 this->m_present_scene();
                 break;
         }
         SDL_Delay(5);
     }
 
-    GameState GameLoop::get_cur_game_state() {
-        return this->m_cur_game_state;
-    }
-
     void GameLoop::m_prepare_scene() const {
-        draw::set_draw_color(this->m_context.renderer, colors::BLACK);
-        SDL_RenderClear(this->m_context.renderer);
+        draw::set_draw_color(this->m_video_context.renderer, colors::BLACK);
+        SDL_RenderClear(this->m_video_context.renderer);
     }
 
     void GameLoop::m_present_scene() const {
-        SDL_RenderPresent(this->m_context.renderer);
+        SDL_RenderPresent(this->m_video_context.renderer);
     }
 
     void GameLoop::do_input(std::pair<int, int>& direction) {
@@ -83,14 +81,17 @@ namespace snek {
         while (SDL_PollEvent(&event) != 0) {
             switch (event.type) {
                 case SDL_QUIT:
-                    this->m_cur_game_state = GameState::Quitting;
+                    this->m_game_context->set_cur_game_state(
+                        GameState::Quitting);
                     break;
 
                 case SDL_KEYDOWN: {
-                    if (this->m_cur_game_state == GameState::SnakeDead &&
+                    if (this->m_game_context->get_cur_game_state() ==
+                            GameState::SnakeDead &&
                         event.key.keysym.sym == SDLK_r) {
                         this->m_board = Board(this->m_dimensions);
-                        this->m_cur_game_state = GameState::Running;
+                        this->m_game_context->set_cur_game_state(
+                            GameState::Running);
                         return;
                     }
                     if (event.key.keysym.sym == SDLK_UP) {
@@ -116,14 +117,14 @@ namespace snek {
 
                 case SDL_FINGERDOWN: {
                     press_active = true;
-                    press_start_x =
-                        (int)(event.tfinger.x * (float)SDL_GetWindowSurface(
-                                                    this->m_context.window)
-                                                    ->w);
-                    press_start_y =
-                        (int)(event.tfinger.y * (float)SDL_GetWindowSurface(
-                                                    this->m_context.window)
-                                                    ->h);
+                    press_start_x = static_cast<int>(
+                        event.tfinger.x * (float)SDL_GetWindowSurface(
+                                              this->m_video_context.window)
+                                              ->w);
+                    press_start_y = static_cast<int>(
+                        event.tfinger.y * (float)SDL_GetWindowSurface(
+                                              this->m_video_context.window)
+                                              ->h);
                     break;
                 }
 
@@ -138,12 +139,14 @@ namespace snek {
                             press_end_x = event.button.x;
                             press_end_y = event.button.y;
                         } else {
-                            press_end_x =
-                                (int)event.tfinger.x *
-                                SDL_GetWindowSurface(this->m_context.window)->w;
-                            press_end_y =
-                                (int)event.tfinger.y *
-                                SDL_GetWindowSurface(this->m_context.window)->h;
+                            press_end_x = static_cast<int>(event.tfinger.x) *
+                                          SDL_GetWindowSurface(
+                                              this->m_video_context.window)
+                                              ->w;
+                            press_end_y = static_cast<int>(event.tfinger.y) *
+                                          SDL_GetWindowSurface(
+                                              this->m_video_context.window)
+                                              ->h;
                         }
                         const int delta_x = press_end_x - press_start_x;
                         const int delta_y = press_end_y - press_start_y;

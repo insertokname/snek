@@ -21,7 +21,8 @@ namespace snek {
     }
 #else
     void App::run() {
-        while (this->m_game_loop.get_cur_game_state() != GameState::Quitting) {
+        while (this->m_game_context.get_cur_game_state() !=
+               GameState::Quitting) {
             this->m_game_loop.game_tick();
         }
     }

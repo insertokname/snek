@@ -1,21 +1,24 @@
 #pragma once
 
-#include "video_context.hpp"
 #include "dimensions.hpp"
+#include "game_context.hpp"
 #include "game_loop.hpp"
+#include "video_context.hpp"
 
 namespace snek {
     class App {
     public:
-        explicit App(const Dimensions &board_size,
-                     const Dimensions &window_size)
-            : m_game_loop(board_size, VideoContext(window_size)) {}
+        App(const Dimensions &board_size, const Dimensions &window_size)
+            : m_game_loop(board_size,
+                          VideoContext(window_size),
+                          &this->m_game_context) {}
 
-        explicit App(const Dimensions &board_size, const VideoContext &video_context)
-            : m_game_loop(board_size, video_context) {}
+        App(const Dimensions &board_size, const VideoContext &video_context)
+            : m_game_loop(board_size, video_context, &this->m_game_context) {}
         void run();
 
     private:
+        GameContext m_game_context;
         GameLoop m_game_loop;
     };
 }
