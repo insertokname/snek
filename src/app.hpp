@@ -8,18 +8,15 @@
 namespace snek {
     class App {
     public:
-        App(const Dimensions &board_size, const Dimensions &window_size)
-            : m_game_loop(board_size,
-                          VideoContext(window_size),
-                          this->m_game_context) {}
-
-        App(const Dimensions &board_size, const VideoContext &video_context)
-            : m_game_loop(board_size, video_context, this->m_game_context) {}
+        App(const Dimensions &board_size,
+            const VideoContext &video_context,
+            std::shared_ptr<GameContext> game_context)
+            : m_game_context(std::move(game_context)),
+              m_game_loop(board_size, video_context, this->m_game_context) {}
         void run();
 
     private:
-        std::shared_ptr<GameContext> m_game_context =
-            std::make_shared<GameContext>();
+        std::shared_ptr<GameContext> m_game_context;
         GameLoop m_game_loop;
     };
 }

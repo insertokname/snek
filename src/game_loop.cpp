@@ -4,6 +4,8 @@
 #include <SDL_timer.h>
 
 #include <chrono>
+#include <iostream>
+#include <ostream>
 
 #include "board.hpp"
 #include "config.hpp"
@@ -21,6 +23,8 @@ namespace snek {
             this->m_board.set_direction(raw_direction);
             m_is_buffering = true;
         }
+
+        std::cout << this->m_game_context->get_exe_path() << std::endl;
 
         switch (this->m_game_context->get_cur_game_state()) {
             case GameState::Quitting:
