@@ -9,7 +9,7 @@ endif()
 
 # Enable no console on windows Release
 if(MSVC AND CMAKE_BUILD_TYPE STREQUAL "Release")
-      set_target_properties("${CMAKE_PROJECT_NAME}" PROPERTIES LINK_FLAGS "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
+    set_target_properties(snek PROPERTIES LINK_FLAGS "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
 endif()
 
 
