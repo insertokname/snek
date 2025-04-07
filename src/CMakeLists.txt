@@ -8,8 +8,8 @@ else()
 endif()
 
 # Enable no console on windows Release
-if(MSVC AND CMAKE_BUILD_TYPE STREQUAL "Release")
-    set_target_properties(snek PROPERTIES LINK_FLAGS "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
+if(MSVC)
+    set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
 endif()
 
 
