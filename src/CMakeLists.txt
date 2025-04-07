@@ -13,6 +13,9 @@ add_dependencies(snek copy_assets)
 
 if(NOT EMSCRIPTEN)
   if(WIN32)
+    if(MSVC)
+      set_target_properties("${CMAKE_PROJECT_NAME}" PROPERTIES LINK_FLAGS "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
+    endif()
     if(AUTO_DOWNLOAD_DEPS)
       target_link_libraries(snek SDL2::SDL2 SDL2::SDL2main SDL2_ttf)
       add_custom_command(
