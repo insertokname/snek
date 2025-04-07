@@ -1,5 +1,10 @@
 file(GLOB SourceFiles CONFIGURE_DEPENDS "*.hpp" "*.cpp")
-add_executable(snek ${SourceFiles})
+
+if(APPLE)
+  add_executable(snek MACOSX_BUNDLE ${SourceFiles})
+else()
+  add_executable(snek ${SourceFiles})
+endif()
 
 add_custom_target(copy_assets
     COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_LIST_DIR}/../copy_assets.cmake
