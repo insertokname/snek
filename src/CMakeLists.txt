@@ -1,10 +1,17 @@
 file(GLOB SourceFiles CONFIGURE_DEPENDS "*.hpp" "*.cpp")
 
-if(APPLE)
+# Enable no console on apple Release
+if(APPLE AND CMAKE_BUILD_TYPE STREQUAL "Release")
   add_executable(snek MACOSX_BUNDLE ${SourceFiles})
 else()
   add_executable(snek ${SourceFiles})
 endif()
+
+# Enable no console on windows Release
+if(MSVC AND CMAKE_BUILD_TYPE STREQUAL "Release")
+      set_target_properties("${CMAKE_PROJECT_NAME}" PROPERTIES LINK_FLAGS "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
+endif()
+
 
 add_custom_target(copy_assets
     COMMAND ${CMAKE_COMMAND} -P ${CMAKE_CURRENT_LIST_DIR}/../copy_assets.cmake
@@ -13,9 +20,6 @@ add_dependencies(snek copy_assets)
 
 if(NOT EMSCRIPTEN)
   if(WIN32)
-    if(MSVC)
-      set_target_properties("${CMAKE_PROJECT_NAME}" PROPERTIES LINK_FLAGS "/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
-    endif()
     if(AUTO_DOWNLOAD_DEPS)
       target_link_libraries(snek SDL2::SDL2 SDL2::SDL2main SDL2_ttf)
       add_custom_command(

@@ -10,6 +10,10 @@ if(SNEK_ALGORITHM)
   add_compile_definitions(SNEK_ALGORITHM)
 endif()
 
+if(NOT CMAKE_BUILD_TYPE)
+  set(CMAKE_BUILD_TYPE Debug)
+endif()
+
 if(EMSCRIPTEN)
   set(CMAKE_EXECUTABLE_SUFFIX ".html")
   
