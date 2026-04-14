@@ -1,5 +1,7 @@
 #!/usr/bin/env fish
 
+# this is a simple script i use to test out performance changes between versions
+
 test (basename $PWD) != build && cd ./build
 
 rm -rf * \

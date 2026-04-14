@@ -2,6 +2,7 @@
 
 #ifdef __EMSCRIPTEN__
 #include "emscripten.h"
+#include "config.hpp"
 #endif
 
 namespace snek {
@@ -15,7 +16,17 @@ namespace snek {
                 emscripten_cancel_main_loop();
                 return;
             }
-            app_instance->m_game_loop.game_tick();
+
+            for (std::size_t i = 0; i < game_config::WASM_SIM_STEPS_PER_FRAME;
+                 i++) {
+                app_instance->m_game_loop.game_tick();
+
+                if (app_instance->m_game_context->get_cur_game_state() ==
+                    GameState::Quit) {
+                    emscripten_cancel_main_loop();
+                    break;
+                }
+            }
         };
         emscripten_set_main_loop(main_loop_callback, 0, 1);
     }

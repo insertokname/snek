@@ -26,12 +26,15 @@ namespace snek {
 #ifdef SNEK_ALGORITHM
 #ifdef SNEK_PERF
         constexpr std::size_t MOVE_SPEED = 0;
+        constexpr std::size_t WASM_SIM_STEPS_PER_FRAME = 128;
 #else
         constexpr std::size_t MOVE_SPEED = 50000;
+        constexpr std::size_t WASM_SIM_STEPS_PER_FRAME = 1;
 #endif
         constexpr std::size_t INPUT_POLL_INTERVAL_US = 8000;
 #else
         constexpr std::size_t MOVE_SPEED = 225000;
+        constexpr std::size_t WASM_SIM_STEPS_PER_FRAME = 1;
         constexpr std::size_t INPUT_POLL_INTERVAL_US = 0;
 #endif
     }
