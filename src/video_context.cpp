@@ -39,6 +39,7 @@ namespace snek {
 
         SDL_SetHint(SDL_HINT_TOUCH_MOUSE_EVENTS, "1");
         SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
+        SDL_SetHint(SDL_HINT_RENDER_BATCHING, "1");
 
         this->renderer = SDL_CreateRenderer(this->window, -1, renderer_flags);
 

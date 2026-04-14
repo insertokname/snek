@@ -22,16 +22,14 @@
 #include "video_context.hpp"
 
 namespace snek::draw {
-    void set_draw_color(SDL_Renderer *renderer, colors::Color color) {
-        SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
-    }
 
-    void draw_cell(const VideoContext &video_context,
-                   const std::shared_ptr<Board> &board,
-                   std::size_t cell_y_pos,
-                   std::size_t cell_x_pos) {
-        // TODO: move this setup out of the draw_cell function to improve
-        // performance
+    struct BoardRenderLayout {
+        SDL_Rect board_rect;
+        int cell_size;
+    };
+
+    BoardRenderLayout get_board_layout(const VideoContext &video_context,
+                                       const Dimensions &board_size) {
         SDL_Rect screen_rect;
         rect_tools::get_screen_rect(video_context.window, screen_rect);
 
@@ -42,16 +40,15 @@ namespace snek::draw {
                                          {.x_padding = game_config::PADDING,
                                           .y_padding = game_config::PADDING}));
 
-        const std::size_t cell_width =
-            out_game_board_rect.w / board->get_size().width;
-        const std::size_t cell_height =
-            out_game_board_rect.h / board->get_size().height;
-        const std::size_t cell_size = std::min(cell_height, cell_width);
+        const int cell_width =
+            out_game_board_rect.w / static_cast<int>(board_size.width);
+        const int cell_height =
+            out_game_board_rect.h / static_cast<int>(board_size.height);
+        const int cell_size = std::max(gui_config::MIN_CELL_SIZE,
+                                       std::min(cell_height, cell_width));
 
-        out_game_board_rect.w =
-            static_cast<int>(cell_size * board->get_size().width);
-        out_game_board_rect.h =
-            static_cast<int>(cell_size * board->get_size().height);
+        out_game_board_rect.w = cell_size * static_cast<int>(board_size.width);
+        out_game_board_rect.h = cell_size * static_cast<int>(board_size.height);
 
         rect_tools::apply_rect_style(
             out_game_board_rect,
@@ -61,16 +58,75 @@ namespace snek::draw {
                 .relative_y_pos = gui_config::BOARD_XY_POS,
             }));
 
-        const int screen_x_pos =
-            out_game_board_rect.x + static_cast<int>(cell_size * cell_x_pos);
-        const int screen_y_pos =
-            out_game_board_rect.y + static_cast<int>(cell_size * cell_y_pos);
+        return {
+            .board_rect = out_game_board_rect,
+            .cell_size = cell_size,
+        };
+    }
 
-        SDL_Rect cell_rect;
-        cell_rect.x = screen_x_pos;
-        cell_rect.y = screen_y_pos;
-        cell_rect.w = (int)cell_size;
-        cell_rect.h = (int)cell_size;
+    SDL_Rect get_cell_rect(const BoardRenderLayout &layout,
+                           std::size_t cell_y_pos,
+                           std::size_t cell_x_pos) {
+        return {
+            .x = layout.board_rect.x +
+                 static_cast<int>(cell_x_pos * layout.cell_size),
+            .y = layout.board_rect.y +
+                 static_cast<int>(cell_y_pos * layout.cell_size),
+            .w = layout.cell_size,
+            .h = layout.cell_size,
+        };
+    }
+
+    void draw_board_grid(const VideoContext &video_context,
+                         const BoardRenderLayout &layout,
+                         const Dimensions &board_size) {
+        set_draw_color(video_context.renderer, colors::BORDER_WHITE);
+
+        const int x_start = layout.board_rect.x;
+        const int y_start = layout.board_rect.y;
+        const int x_end = layout.board_rect.x + layout.board_rect.w;
+        const int y_end = layout.board_rect.y + layout.board_rect.h;
+
+        for (std::size_t row = 0; row <= board_size.height; row++) {
+            const int row_pixel =
+                y_start + static_cast<int>(row * layout.cell_size);
+            SDL_RenderDrawLine(
+                video_context.renderer, x_start, row_pixel, x_end, row_pixel);
+        }
+
+        for (std::size_t col = 0; col <= board_size.width; col++) {
+            const int col_pixel =
+                x_start + static_cast<int>(col * layout.cell_size);
+            SDL_RenderDrawLine(
+                video_context.renderer, col_pixel, y_start, col_pixel, y_end);
+        }
+    }
+
+    void draw_cell_fill_batch(const VideoContext &video_context,
+                              const std::vector<SDL_Rect> &rects,
+                              colors::Color color) {
+        if (rects.empty()) {
+            return;
+        }
+
+        set_draw_color(video_context.renderer, color);
+        SDL_RenderFillRects(video_context.renderer,
+                            rects.data(),
+                            static_cast<int>(rects.size()));
+    }
+
+    void set_draw_color(SDL_Renderer *renderer, colors::Color color) {
+        SDL_SetRenderDrawColor(renderer, color.r, color.g, color.b, color.a);
+    }
+
+    void draw_cell(const VideoContext &video_context,
+                   const std::shared_ptr<Board> &board,
+                   std::size_t cell_y_pos,
+                   std::size_t cell_x_pos) {
+        const BoardRenderLayout layout =
+            get_board_layout(video_context, board->get_size());
+        const SDL_Rect cell_rect =
+            get_cell_rect(layout, cell_y_pos, cell_x_pos);
 
         switch (board->mat()[cell_y_pos][cell_x_pos]) {
             case Cell::Empty:
@@ -107,11 +163,57 @@ namespace snek::draw {
 
     void draw_board(const VideoContext &video_context,
                     const std::shared_ptr<Board> &board) {
-        for (std::size_t i = 0; i < board->get_size().height; i++) {
-            for (std::size_t j = 0; j < board->get_size().width; j++) {
-                draw_cell(video_context, board, i, j);
+        const Dimensions board_size = board->get_size();
+        const BoardRenderLayout layout =
+            get_board_layout(video_context, board_size);
+
+        const auto &mat = board->mat();
+        const std::size_t total_cells = board_size.width * board_size.height;
+
+        std::vector<SDL_Rect> tail_cells;
+        std::vector<SDL_Rect> body_cells;
+        std::vector<SDL_Rect> head_cells;
+        std::vector<SDL_Rect> food_cells;
+
+        tail_cells.reserve(total_cells / 4);
+        body_cells.reserve(total_cells / 4);
+        head_cells.reserve(1);
+        food_cells.reserve(1);
+
+        for (std::size_t row = 0; row < board_size.height; row++) {
+            for (std::size_t col = 0; col < board_size.width; col++) {
+                const Cell current_cell = mat[row][col];
+                if (current_cell == Cell::Empty) {
+                    continue;
+                }
+
+                SDL_Rect cell_rect = get_cell_rect(layout, row, col);
+
+                switch (current_cell) {
+                    case Cell::Tail:
+                        tail_cells.push_back(cell_rect);
+                        break;
+                    case Cell::Body:
+                        body_cells.push_back(cell_rect);
+                        break;
+                    case Cell::Head:
+                        head_cells.push_back(cell_rect);
+                        break;
+                    case Cell::Food:
+                        food_cells.push_back(cell_rect);
+                        break;
+                    default:
+                        break;
+                }
             }
         }
+
+        draw_cell_fill_batch(video_context, tail_cells, colors::TAIL_GREEN);
+        draw_cell_fill_batch(video_context, body_cells, colors::BODY_GREEN);
+        draw_cell_fill_batch(video_context, head_cells, colors::HEAD_GREEN);
+        draw_cell_fill_batch(video_context, food_cells, colors::FOOD_RED);
+
+        draw_board_grid(video_context, layout, board_size);
     }
 
     void draw_popup_screen_background(SDL_Rect &popup_background_screen,
@@ -129,7 +231,8 @@ namespace snek::draw {
         rect_tools::apply_rect_style(game_over_border_background_rect,
                                      popup_background_screen,
                                      rect_tools::BorderRectStyle({
-                                         .border_thickness = 4,
+                                         .border_thickness =
+                                             gui_config::POPUP_BORDER_THICKNESS,
                                      }));
 
         set_draw_color(video_context.renderer, colors::BORDER_WHITE);

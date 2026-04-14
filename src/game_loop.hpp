@@ -33,6 +33,7 @@ namespace snek {
         void m_prepare_scene() const;
         void m_present_scene() const;
         bool m_is_buffering = false;
+        bool m_force_render = true;
         Dimensions m_dimensions;
         VideoContext m_video_context;
         std::shared_ptr<GameContext> m_game_context;

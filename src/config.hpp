@@ -7,6 +7,8 @@
 namespace snek {
     namespace game_config {
         constexpr double FOLLOW_EXACT_THRESHOLD = 0.60;
+        constexpr std::size_t RENDER_INTERVAL_US = 16667;
+        constexpr int MIN_SWIPE_DISTANCE = 30;
         constexpr Dimensions INITIAL_SCREEN_SIZE = Dimensions{
             .height = 720,
             .width = 1280,
@@ -22,13 +24,20 @@ namespace snek {
 #endif
 
 #ifdef SNEK_ALGORITHM
+#ifdef SNEK_PERF
+        constexpr std::size_t MOVE_SPEED = 0;
+#else
         constexpr std::size_t MOVE_SPEED = 50000;
+#endif
+        constexpr std::size_t INPUT_POLL_INTERVAL_US = 8000;
 #else
         constexpr std::size_t MOVE_SPEED = 225000;
+        constexpr std::size_t INPUT_POLL_INTERVAL_US = 0;
 #endif
     }
 
     namespace gui_config {
+        constexpr int MIN_CELL_SIZE = 1;
         constexpr double BOARD_XY_POS = 0.5;
 
         constexpr double POPUP_SCREEN_TOP_SIDE_HEIGHT = 0.5;
@@ -44,5 +53,6 @@ namespace snek {
         constexpr int POPUP_SCREEN_TITLE_FONT_SIZE = 75;
         constexpr int POPUP_SCREEN_SUB_TITLE_FONT_SIZE = 35;
         constexpr int POPUP_SCREEN_ERROR_SUB_TITLE_FONT_SIZE = 25;
+        constexpr int POPUP_BORDER_THICKNESS = 4;
     }
 }
