@@ -31,13 +31,13 @@ jobs:
           mkdir output/game -p
 
           cd build_game
-          emcmake cmake .. -DSNEK_ALGORITHM=OFF -DCMAKE_BUILD_TYPE=MinSizeRe
-          cmake --build .
+          emcmake cmake .. -DSNEK_ALGORITHM=OFF -DCMAKE_BUILD_TYPE=MinSizeRel
+          cmake --build . --parallel
           cp src/snek* ../output/game
 
           cd ../build_algo
-          emcmake cmake .. -DSNEK_ALGORITHM=ON -DCMAKE_BUILD_TYPE=MinSizeRe
-          cmake --build .
+          emcmake cmake .. -DSNEK_ALGORITHM=ON -DCMAKE_BUILD_TYPE=MinSizeRel
+          cmake --build . --parallel
           cp src/snek* ../output/algorithm
 
           cd ..
