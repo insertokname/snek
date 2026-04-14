@@ -32,10 +32,10 @@ namespace snek {
         }
 
 #ifdef SNEK_PERF
+        std::size_t index = valid_spaces.size() / 2;
+#else
         std::size_t index = generate_random_number(
             0, static_cast<int>(valid_spaces.size()) - 1);
-#else
-        std::size_t index = valid_spaces.size() / 2;
 #endif
         this->m_food_location = valid_spaces[index];
         this->m_mat[valid_spaces[index].first][valid_spaces[index].second] =
