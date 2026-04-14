@@ -35,7 +35,7 @@ if (ENVIRONMENT_IS_NODE) {
 
 // --pre-jses are emitted after the Module integration code, so that they can
 // refer to Module (if they choose; they can also define Module)
-// include: /tmp/tmppytajk_c.js
+// include: /tmp/tmphuzw3obo.js
 
   Module['expectedDataFileDownloads'] ??= 0;
   Module['expectedDataFileDownloads']++;
@@ -219,21 +219,21 @@ Module['FS_createPath']("/", "assets", true, true);
 
   })();
 
-// end include: /tmp/tmppytajk_c.js
-// include: /tmp/tmpzc9eo_73.js
+// end include: /tmp/tmphuzw3obo.js
+// include: /tmp/tmpbaoiljdf.js
 
     // All the pre-js content up to here must remain later on, we need to run
     // it.
     if (Module['$ww'] || (typeof ENVIRONMENT_IS_PTHREAD != 'undefined' && ENVIRONMENT_IS_PTHREAD)) Module['preRun'] = [];
     var necessaryPreJSTasks = Module['preRun'].slice();
-  // end include: /tmp/tmpzc9eo_73.js
-// include: /tmp/tmpe80hjy1a.js
+  // end include: /tmp/tmpbaoiljdf.js
+// include: /tmp/tmprab8vx22.js
 
     if (!Module['preRun']) throw 'Module.preRun should exist because file support used it; did a pre-js delete it?';
     necessaryPreJSTasks.forEach((task) => {
       if (Module['preRun'].indexOf(task) < 0) throw 'All preRun tasks that exist before user pre-js code should remain after; did you replace Module or modify Module.preRun?';
     });
-  // end include: /tmp/tmpe80hjy1a.js
+  // end include: /tmp/tmprab8vx22.js
 
 
 // Sometimes an existing Module object exists with properties
@@ -9855,17 +9855,6 @@ var ASM_CONSTS = {
   }
   }
 
-  function _random_get(buffer, size) {
-  try {
-  
-      randomFill(HEAPU8.subarray(buffer, buffer + size));
-      return 0;
-    } catch (e) {
-    if (typeof FS == 'undefined' || !(e.name === 'ErrnoError')) throw e;
-    return e.errno;
-  }
-  }
-
 
 
 
@@ -10500,9 +10489,7 @@ var wasmImports = {
   /** @export */
   invoke_v,
   /** @export */
-  invoke_viiii,
-  /** @export */
-  random_get: _random_get
+  invoke_viiii
 };
 var wasmExports;
 createWasm();
